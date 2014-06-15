@@ -1,5 +1,15 @@
 package com.kamil.android_location;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -17,6 +27,7 @@ import android.content.SharedPreferences.Editor;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity implements
@@ -40,13 +51,36 @@ public class MainActivity extends Activity implements
     
     private static final String LOG_TAG = "Location Services";
     
+    Logger LOCATION_LOG;
+    
     SharedPreferences mPrefs;
     Editor mEditor;
+    
+    TextView txtTime;
+    TextView txtAccuracy;
+    TextView txtProvider;
+    TextView txtLatitude;
+    TextView txtLongitude;
+    TextView txtBearing;
+    TextView txtSpeed;
+    TextView txtAltitude;
+    
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        txtTime = (TextView) findViewById(R.id.txtTime);
+        txtAccuracy = (TextView) findViewById(R.id.txtAccuracy);
+        txtProvider = (TextView) findViewById(R.id.txtProvider);
+        
+        txtLatitude = (TextView) findViewById(R.id.txtLatitude);
+        txtLongitude = (TextView) findViewById(R.id.txtLongitude);
+        
+        txtBearing = (TextView) findViewById(R.id.txtBearing);
+        txtSpeed = (TextView) findViewById(R.id.txtSpeed);
+        txtAltitude = (TextView) findViewById(R.id.txtAltitude);
 
         mServicesConnected = servicesConnected();
         if (mServicesConnected) {
@@ -62,6 +96,8 @@ public class MainActivity extends Activity implements
 		// Get a SharedPreferences editor
 		mEditor = mPrefs.edit();
 		mUpdatesRequested = false;
+		
+		LOCATION_LOG = LoggerFactory.getLogger(MainActivity.class);
     }
     
     /*
@@ -229,14 +265,35 @@ public class MainActivity extends Activity implements
 	public void onLocationChanged(Location location) {
 		Log.d(LOG_TAG, "Got Location Update");
 		if (location != null) {
-			String msg = "Updated Location: "
-					+ Double.toString(location.getLatitude()) + ","
-					+ Double.toString(location.getLongitude());
-			Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "New Location", Toast.LENGTH_SHORT).show();
+			updateView(location);
+			logLocation(location);
 		} else {
 			Toast.makeText(this, "Empty Location", Toast.LENGTH_SHORT).show();
 		}
-		
 	}
-
+	
+	private void updateView(Location location) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+		Date date = new Date(location.getTime());
+		txtTime.setText(sdf.format(date));
+		
+		txtProvider.setText(location.getProvider());
+		txtAccuracy.setText(Float.toString(location.getAccuracy()));
+		
+		txtLatitude.setText(Double.toString(location.getLatitude()));
+		txtLongitude.setText(Double.toString(location.getLongitude()));
+		
+		txtBearing.setText(Float.toString(location.getBearing()));
+		txtSpeed.setText(Float.toString(location.getSpeed()));
+		txtAltitude.setText(Double.toString(location.getAltitude()));
+	}
+	
+	private void logLocation(Location location) {
+		String locationLine = location.getProvider() + "," + location.getTime() + "," + location.getAccuracy();
+		locationLine += "," + location.getLatitude() + "," + location.getLongitude();
+		locationLine += "," + location.getSpeed() + "," + location.getBearing() + "," + location.getAltitude();
+		
+		LOCATION_LOG.info(locationLine);
+	}
 }

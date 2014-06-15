@@ -5,8 +5,147 @@
     tools:context="${packageName}.${activityClass}" >
 
     <TextView
+        android:id="@+id/txtProvider"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_alignBaseline="@+id/lblProvider"
+        android:layout_alignBottom="@+id/lblProvider"
+        android:layout_centerHorizontal="true"
+        android:text="provider placeholder" />
+
+    <TextView
+        android:id="@+id/lblProvider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="31dp"
+        android:text="@string/Provider"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/lblAccuracy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/txtAccuracy"
+        android:layout_alignBottom="@+id/txtAccuracy"
+        android:layout_alignLeft="@+id/lblProvider"
+        android:text="@string/Accuracy"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <TextView
+        android:id="@+id/txtAccuracy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtProvider"
+        android:layout_below="@+id/txtProvider"
+        android:layout_marginTop="18dp"
+        android:text="accuracy placeholder" />
+
+    <TextView
+        android:id="@+id/lblTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/txtTime"
+        android:layout_alignBottom="@+id/txtTime"
+        android:layout_alignLeft="@+id/lblAccuracy"
+        android:text="@string/Time" />
+
+    <TextView
+        android:id="@+id/txtTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtAccuracy"
+        android:layout_below="@+id/txtAccuracy"
+        android:layout_marginTop="16dp"
+        android:text="time placeholder" />
+
+    <TextView
+        android:id="@+id/txtLatitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtTime"
+        android:layout_below="@+id/txtTime"
+        android:layout_marginTop="34dp"
+        android:text="lat placeholder" />
+
+    <TextView
+        android:id="@+id/lblLatitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/txtLatitude"
+        android:layout_alignLeft="@+id/lblTime"
+        android:text="@string/Latitude" />
+
+    <TextView
+        android:id="@+id/lblLongitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/txtLongitude"
+        android:layout_alignLeft="@+id/lblLatitude"
+        android:text="@string/Longitude" />
+
+    <TextView
+        android:id="@+id/txtLongitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtLatitude"
+        android:layout_below="@+id/txtLatitude"
+        android:layout_marginTop="18dp"
+        android:text="long placeholder" />
+
+    <TextView
+        android:id="@+id/txtSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtLongitude"
+        android:layout_below="@+id/txtLongitude"
+        android:layout_marginLeft="14dp"
+        android:layout_marginTop="55dp"
+        android:text="speed placeholder" />
+
+    <TextView
+        android:id="@+id/lblSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/txtSpeed"
+        android:layout_alignLeft="@+id/lblLongitude"
+        android:text="@string/Speed" />
+
+    <TextView
+        android:id="@+id/txtBearing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtSpeed"
+        android:layout_below="@+id/txtSpeed"
+        android:layout_marginTop="22dp"
+        android:text="bearing placeholder" />
+
+    <TextView
+        android:id="@+id/lblBearing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/txtBearing"
+        android:layout_alignBottom="@+id/txtBearing"
+        android:layout_alignLeft="@+id/lblSpeed"
+        android:text="@string/Bearing" />
+
+    <TextView
+        android:id="@+id/txtAltitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtBearing"
+        android:layout_below="@+id/txtBearing"
+        android:layout_marginTop="28dp"
+        android:text="altitude placeholder" />
+
+    <TextView
+        android:id="@+id/lblAltitude"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/txtAltitude"
+        android:layout_alignLeft="@+id/lblBearing"
+        android:text="@string/Altitude" />
 
 </RelativeLayout>

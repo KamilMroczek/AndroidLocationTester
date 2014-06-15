@@ -2,6 +2,13 @@
 <resources>
 
     <string name="app_name">Android_location</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="Provider">Provider</string>
+    <string name="Accuracy">Accuracy</string>
+    <string name="Latitude">Latitude</string>
+    <string name="Longitude">Longitude</string>
+    <string name="Time">Time</string>
+    <string name="Speed">Speed</string>
+    <string name="Bearing">Bearing</string>
+    <string name="Altitude">Altitude</string>
 
 </resources>
