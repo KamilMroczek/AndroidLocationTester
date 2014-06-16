@@ -96,24 +96,6 @@
         android:text="long placeholder" />
 
     <TextView
-        android:id="@+id/txtSpeed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/txtLongitude"
-        android:layout_below="@+id/txtLongitude"
-        android:layout_marginLeft="14dp"
-        android:layout_marginTop="55dp"
-        android:text="speed placeholder" />
-
-    <TextView
-        android:id="@+id/lblSpeed"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/txtSpeed"
-        android:layout_alignLeft="@+id/lblLongitude"
-        android:text="@string/Speed" />
-
-    <TextView
         android:id="@+id/txtBearing"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -147,5 +129,38 @@
         android:layout_alignBottom="@+id/txtAltitude"
         android:layout_alignLeft="@+id/lblBearing"
         android:text="@string/Altitude" />
+
+    <TextView
+        android:id="@+id/lblSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/lblLongitude"
+        android:layout_centerVertical="true"
+        android:text="@string/Speed" />
+
+    <TextView
+        android:id="@+id/txtSpeed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/txtProvider"
+        android:layout_centerVertical="true"
+        android:text="speed placeholder" />
+
+    <Button
+        android:id="@+id/btnStartBackground"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/lblAltitude"
+        android:layout_below="@+id/txtAltitude"
+        android:layout_marginTop="18dp"
+        android:text="@string/start_background" />
+
+    <Button
+        android:id="@+id/btnStopBackground"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/btnStartBackground"
+        android:layout_below="@+id/btnStartBackground"
+        android:text="@string/stop_background" />
 
 </RelativeLayout>
