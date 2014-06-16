@@ -1,18 +1,11 @@
 package com.kamil.android_location;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -20,13 +13,14 @@ import com.google.android.gms.location.LocationRequest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
+import android.content.Intent;
 import android.content.IntentSender;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,25 +30,16 @@ public class MainActivity extends Activity implements
 		LocationListener {
 
 	private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-	
-	LocationClient mLocationClient;
-	
-    private static final int MILLIS_PER_SECOND = 1000;
+	public static final String LOG_TAG = "Main Activity";
     // Update frequency in milliseconds
-    private static final long UPDATE_INTERVAL = MILLIS_PER_SECOND * 10;
-    // A fast frequency ceiling in milliseconds
-    private static final long FASTEST_INTERVAL = MILLIS_PER_SECOND * 10;
-    LocationRequest mLocationRequest;
-    
-    boolean mUpdatesRequested;
+    private static final long UPDATE_INTERVAL = Constants.MILLIS_PER_SECOND * 10;
+    private static final long FASTEST_INTERVAL = Constants.MILLIS_PER_SECOND * 10;
+
+    private GooglePlayHelper mGooglePlayHelper;
     private boolean mServicesConnected;
     
-    private static final String LOG_TAG = "Location Services";
-    
-    Logger LOCATION_LOG;
-    
-    SharedPreferences mPrefs;
-    Editor mEditor;
+    private LocationClient mLocationClient;
+    private LocationRequest mLocationRequest;
     
     TextView txtTime;
     TextView txtAccuracy;
@@ -71,7 +56,23 @@ public class MainActivity extends Activity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         
-        txtTime = (TextView) findViewById(R.id.txtTime);
+        setupControls();
+
+        mGooglePlayHelper = new GooglePlayHelper();
+        
+        mServicesConnected = mGooglePlayHelper.servicesConnected(this);
+        if (mServicesConnected) {
+			mLocationClient = new LocationClient(this, this, this);
+			
+			mLocationRequest = LocationRequest.create();
+			mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+			mLocationRequest.setInterval(UPDATE_INTERVAL);
+			mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+		}
+    }
+    
+    private void setupControls() {
+    	txtTime = (TextView) findViewById(R.id.txtTime);
         txtAccuracy = (TextView) findViewById(R.id.txtAccuracy);
         txtProvider = (TextView) findViewById(R.id.txtProvider);
         
@@ -81,23 +82,22 @@ public class MainActivity extends Activity implements
         txtBearing = (TextView) findViewById(R.id.txtBearing);
         txtSpeed = (TextView) findViewById(R.id.txtSpeed);
         txtAltitude = (TextView) findViewById(R.id.txtAltitude);
-
-        mServicesConnected = servicesConnected();
-        if (mServicesConnected) {
-			mLocationClient = new LocationClient(this, this, this);
-			
-			mLocationRequest = LocationRequest.create();
-			mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-			mLocationRequest.setInterval(UPDATE_INTERVAL);
-			mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-		}
-		// Open the shared preferences
-		mPrefs = getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
-		// Get a SharedPreferences editor
-		mEditor = mPrefs.edit();
-		mUpdatesRequested = false;
-		
-		LOCATION_LOG = LoggerFactory.getLogger(MainActivity.class);
+        
+        Button btnStartBackground = (Button) findViewById(R.id.btnStartBackground);
+        btnStartBackground.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				startService(new Intent(v.getContext(),LocationBackgroundService.class));
+			}
+		});
+        
+        Button btnStopBackground = (Button) findViewById(R.id.btnStopBackground);
+        btnStopBackground.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				stopService(new Intent(v.getContext(),LocationBackgroundService.class));
+			}
+		});
     }
     
     /*
@@ -131,24 +131,11 @@ public class MainActivity extends Activity implements
     @Override
     protected void onPause() {
     	super.onPause();
-        // Save the current setting for updates
-        mEditor.putBoolean("KEY_UPDATES_ON", mUpdatesRequested);
-        mEditor.commit();
     }
     
     @Override
     protected void onResume() {
     	super.onResume();
-        /*
-         * Get any previous setting for location updates
-         * Gets "false" if an error occurs
-         */
-        if (mPrefs.contains("KEY_UPDATES_ON")) {
-            mUpdatesRequested = mPrefs.getBoolean("KEY_UPDATES_ON", false);
-        } else {
-            mEditor.putBoolean("KEY_UPDATES_ON", false);
-            mEditor.commit();
-        }
     }
     
     // Define a DialogFragment that displays the error dialog
@@ -170,49 +157,21 @@ public class MainActivity extends Activity implements
             return mDialog;
         }
     }
-    
-	private boolean servicesConnected() {
-		// Check that Google Play services is available
-		int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
-		// If Google Play services is available
-		if (ConnectionResult.SUCCESS == resultCode) {
-			// In debug mode, log the status
-			Log.d(LOG_TAG, "Google Play services is available.");
-			return true;
-		} else { // Google Play services was not available for some reason
-			// Get the error dialog from Google Play services
-//			Dialog errorDialog = 
-//					GooglePlayServicesUtil.getErrorDialog(resultCode, this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
-//			// If Google Play services can provide an error dialog
-//			if (errorDialog != null) {
-//				// Create a new DialogFragment for the error dialog
-//				ErrorDialogFragment errorFragment = new ErrorDialogFragment();
-//				// Set the dialog in the DialogFragment
-//				errorFragment.setDialog(errorDialog);
-//				// Show the error dialog in the DialogFragment
-//				errorFragment.show(getFragmentManager(), LOCATION_SERVICE);
-//			}
-			Log.d(LOG_TAG, "Google Play services is NOT available.");
-			return false;
-		}
-	}
 	
 	/*
      * Called by Location Services when the request to connect the
      * client finishes successfully. At this point, you can
      * request the current location or start periodic updates
      */
-    @Override
-    public void onConnected(Bundle dataBundle) {
-        // Display the connection status
-        Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
-        Log.d(LOG_TAG, "Connected Location Client");
-        
-//        if (mUpdatesRequested) {
-        	Log.d(LOG_TAG, "Requesting Location Updates");
-            mLocationClient.requestLocationUpdates(mLocationRequest, this);
-//        }
-    }
+	@Override
+	public void onConnected(Bundle dataBundle) {
+		// Display the connection status
+		Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
+		Log.d(LOG_TAG, "Connected Location Client");
+
+		Log.d(LOG_TAG, "Requesting Location Updates");
+		mLocationClient.requestLocationUpdates(mLocationRequest, this);
+	}
 
     /*
      * Called by Location Services if the connection to the
@@ -241,9 +200,7 @@ public class MainActivity extends Activity implements
         if (connectionResult.hasResolution()) {
             try {
                 // Start an Activity that tries to resolve the error
-                connectionResult.startResolutionForResult(
-                        this,
-                        CONNECTION_FAILURE_RESOLUTION_REQUEST);
+                connectionResult.startResolutionForResult(this, CONNECTION_FAILURE_RESOLUTION_REQUEST);
                 /*
                 * Thrown if Google Play services canceled the original
                 * PendingIntent
@@ -262,12 +219,11 @@ public class MainActivity extends Activity implements
     }
 
 	@Override
-	public void onLocationChanged(Location location) {
-		Log.d(LOG_TAG, "Got Location Update");
-		if (location != null) {
+	public void onLocationChanged(Location newLocation) {
+		Log.d(LOG_TAG, "Received Location Update");
+		if (newLocation != null) {
 			Toast.makeText(this, "New Location", Toast.LENGTH_SHORT).show();
-			updateView(location);
-			logLocation(location);
+			updateView(newLocation);
 		} else {
 			Toast.makeText(this, "Empty Location", Toast.LENGTH_SHORT).show();
 		}
@@ -287,13 +243,5 @@ public class MainActivity extends Activity implements
 		txtBearing.setText(Float.toString(location.getBearing()));
 		txtSpeed.setText(Float.toString(location.getSpeed()));
 		txtAltitude.setText(Double.toString(location.getAltitude()));
-	}
-	
-	private void logLocation(Location location) {
-		String locationLine = location.getProvider() + "," + location.getTime() + "," + location.getAccuracy();
-		locationLine += "," + location.getLatitude() + "," + location.getLongitude();
-		locationLine += "," + location.getSpeed() + "," + location.getBearing() + "," + location.getAltitude();
-		
-		LOCATION_LOG.info(locationLine);
 	}
 }
