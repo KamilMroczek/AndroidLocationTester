@@ -1,8 +1,5 @@
 package com.kamil.android_location;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -20,10 +17,7 @@ import com.google.android.gms.location.LocationRequest;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.Context;
 import android.content.IntentSender;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -46,15 +40,11 @@ public class MainActivity extends Activity implements
     private static final long FASTEST_INTERVAL = MILLIS_PER_SECOND * 10;
     LocationRequest mLocationRequest;
     
-    boolean mUpdatesRequested;
     private boolean mServicesConnected;
     
     private static final String LOG_TAG = "Location Services";
     
     Logger LOCATION_LOG;
-    
-    SharedPreferences mPrefs;
-    Editor mEditor;
     
     TextView txtTime;
     TextView txtAccuracy;
@@ -91,11 +81,6 @@ public class MainActivity extends Activity implements
 			mLocationRequest.setInterval(UPDATE_INTERVAL);
 			mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
 		}
-		// Open the shared preferences
-		mPrefs = getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
-		// Get a SharedPreferences editor
-		mEditor = mPrefs.edit();
-		mUpdatesRequested = false;
 		
 		LOCATION_LOG = LoggerFactory.getLogger(MainActivity.class);
     }
@@ -131,24 +116,11 @@ public class MainActivity extends Activity implements
     @Override
     protected void onPause() {
     	super.onPause();
-        // Save the current setting for updates
-        mEditor.putBoolean("KEY_UPDATES_ON", mUpdatesRequested);
-        mEditor.commit();
     }
     
     @Override
     protected void onResume() {
     	super.onResume();
-        /*
-         * Get any previous setting for location updates
-         * Gets "false" if an error occurs
-         */
-        if (mPrefs.contains("KEY_UPDATES_ON")) {
-            mUpdatesRequested = mPrefs.getBoolean("KEY_UPDATES_ON", false);
-        } else {
-            mEditor.putBoolean("KEY_UPDATES_ON", false);
-            mEditor.commit();
-        }
     }
     
     // Define a DialogFragment that displays the error dialog
