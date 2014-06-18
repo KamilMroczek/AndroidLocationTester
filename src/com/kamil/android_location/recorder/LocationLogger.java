@@ -1,4 +1,4 @@
-package com.kamil.android_location;
+package com.kamil.android_location.recorder;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +13,7 @@ import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.kamil.android_location.Constants;
 
 public class LocationLogger implements GooglePlayServicesClient.ConnectionCallbacks,
 		GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
@@ -25,22 +26,22 @@ public class LocationLogger implements GooglePlayServicesClient.ConnectionCallba
     
     private LocationClient mLocationClient;
     private LocationRequest mLocationRequest;
-    private int priority;
+    private int fusedProviderPriority;
     private int intervalBetweenUpdates;
     
-    public LocationLogger(String tag, int priority) { 
+    public LocationLogger(String tag, int priority, int refreshIntervalSecs) { 
     	logTag = tag;
     	started = false;
-    	this.priority = priority;
-    	intervalBetweenUpdates = Constants.MILLIS_PER_SECOND * 10;
+    	this.fusedProviderPriority = priority;
+    	intervalBetweenUpdates = Constants.MILLIS_PER_SECOND * refreshIntervalSecs;
     }
     
     public void start(Context context) {
     	Log.d(logTag, "Starting Location Logger: " + logTag);
 
     	mLocationRequest = LocationRequest.create();
-    	mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-		mLocationRequest.setPriority(this.priority);
+    	mLocationRequest.setFastestInterval(intervalBetweenUpdates);
+		mLocationRequest.setPriority(this.fusedProviderPriority);
 		mLocationRequest.setInterval(intervalBetweenUpdates);
 		
     	mLocationClient = new LocationClient(context, this, this);

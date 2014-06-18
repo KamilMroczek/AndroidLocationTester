@@ -9,6 +9,7 @@ import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.kamil.android_location.background.LocationBackgroundService;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -21,6 +22,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,7 +35,7 @@ public class MainActivity extends Activity implements
 	private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 	public static final String LOG_TAG = "Main Activity";
     // Update frequency in milliseconds
-    private static final long UPDATE_INTERVAL = Constants.MILLIS_PER_SECOND * 10;
+    private static final long UPDATE_INTERVAL = Constants.MILLIS_PER_SECOND * Constants.DEFAULT_REFRESH_INTERVAL_SECS;
     private static final long FASTEST_INTERVAL = Constants.MILLIS_PER_SECOND * 10;
 
     private GooglePlayHelper mGooglePlayHelper;
@@ -43,12 +46,13 @@ public class MainActivity extends Activity implements
     
     TextView txtTime;
     TextView txtAccuracy;
-    TextView txtProvider;
     TextView txtLatitude;
     TextView txtLongitude;
-    TextView txtBearing;
     TextView txtSpeed;
     TextView txtAltitude;
+    
+    EditText txtRefreshInterval;
+    RadioGroup radioGroupFusedProviderType;
     
 	
     @Override
@@ -60,34 +64,47 @@ public class MainActivity extends Activity implements
 
         mGooglePlayHelper = new GooglePlayHelper();
         
-        mServicesConnected = mGooglePlayHelper.servicesConnected(this);
-        if (mServicesConnected) {
-			mLocationClient = new LocationClient(this, this, this);
-			
-			mLocationRequest = LocationRequest.create();
-			mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-			mLocationRequest.setInterval(UPDATE_INTERVAL);
-			mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-		}
+        connectLocationClient(LocationRequest.PRIORITY_HIGH_ACCURACY, UPDATE_INTERVAL, false);
     }
     
     private void setupControls() {
     	txtTime = (TextView) findViewById(R.id.txtTime);
         txtAccuracy = (TextView) findViewById(R.id.txtAccuracy);
-        txtProvider = (TextView) findViewById(R.id.txtProvider);
         
         txtLatitude = (TextView) findViewById(R.id.txtLatitude);
         txtLongitude = (TextView) findViewById(R.id.txtLongitude);
         
-        txtBearing = (TextView) findViewById(R.id.txtBearing);
         txtSpeed = (TextView) findViewById(R.id.txtSpeed);
         txtAltitude = (TextView) findViewById(R.id.txtAltitude);
+        
+        txtAltitude = (TextView) findViewById(R.id.txtAltitude);
+        
+        txtRefreshInterval = (EditText) findViewById(R.id.txtRefreshInterval);
+        txtRefreshInterval.setText(Integer.toString(Constants.DEFAULT_REFRESH_INTERVAL_SECS));
+        
+        radioGroupFusedProviderType = (RadioGroup) findViewById(R.id.radioFusedProviderType);
+        radioGroupFusedProviderType.check(R.id.radioHighAccuracy);
         
         Button btnStartBackground = (Button) findViewById(R.id.btnStartBackground);
         btnStartBackground.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				startService(new Intent(v.getContext(),LocationBackgroundService.class));
+				// stop the service first if running. Then start a new one
+				stopService(new Intent(v.getContext(), LocationBackgroundService.class));
+				
+				int refreshInterval = Integer.valueOf(txtRefreshInterval.getText().toString());
+				
+				int checkedButton = radioGroupFusedProviderType.getCheckedRadioButtonId();
+				int fusedProviderType = (checkedButton == R.id.radioHighAccuracy) ? 
+						LocationRequest.PRIORITY_HIGH_ACCURACY : LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY; 
+				
+				Intent startIntent = new Intent(v.getContext(), LocationBackgroundService.class);
+				startIntent.putExtra(Constants.FUSED_PROVIDER_TYPE_EXTRA, fusedProviderType);
+				startIntent.putExtra(Constants.REFRESH_INTERVAL_EXTRA, refreshInterval);
+				
+				startService(startIntent);
+				
+				restartUILocationUpdates(fusedProviderType, refreshInterval);
 			}
 		});
         
@@ -95,9 +112,14 @@ public class MainActivity extends Activity implements
         btnStopBackground.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				stopService(new Intent(v.getContext(),LocationBackgroundService.class));
+				stopService(new Intent(v.getContext(), LocationBackgroundService.class));
 			}
 		});
+    }
+    
+    private void restartUILocationUpdates(int fusedProviderType, int refreshIntervalSecs) {
+    	disconnectLocationClient();
+    	connectLocationClient(fusedProviderType, (long)refreshIntervalSecs, true);
     }
     
     /*
@@ -116,16 +138,8 @@ public class MainActivity extends Activity implements
      */
     @Override
     protected void onStop() {
-        // when disconnected nothing will not be pulling location, unless
-    	// another app is pulling, so when you reconnect it could get an old location
-		if (mServicesConnected) {
-			if (mLocationClient.isConnected()) {
-				mLocationClient.removeLocationUpdates(this);
-			}
-
-			mLocationClient.disconnect();
-		}
-        super.onStop();
+    	disconnectLocationClient();
+    	super.onStop();
     }
     
     @Override
@@ -234,14 +248,40 @@ public class MainActivity extends Activity implements
 		Date date = new Date(location.getTime());
 		txtTime.setText(sdf.format(date));
 		
-		txtProvider.setText(location.getProvider());
 		txtAccuracy.setText(Float.toString(location.getAccuracy()));
 		
 		txtLatitude.setText(Double.toString(location.getLatitude()));
 		txtLongitude.setText(Double.toString(location.getLongitude()));
 		
-		txtBearing.setText(Float.toString(location.getBearing()));
 		txtSpeed.setText(Float.toString(location.getSpeed()));
 		txtAltitude.setText(Double.toString(location.getAltitude()));
+	}
+	
+	private void disconnectLocationClient() {
+		// when disconnected nothing will not be pulling location, unless
+    	// another app is pulling, so when you reconnect it could get an old location
+		if (mServicesConnected) {
+			if (mLocationClient.isConnected()) {
+				mLocationClient.removeLocationUpdates(this);
+			}
+
+			mLocationClient.disconnect();
+		}
+	}
+	
+	private void connectLocationClient(int fusedLocationPriority, long refreshInterval, boolean connectImmediately) {
+		mServicesConnected = mGooglePlayHelper.servicesConnected(this);
+        if (mServicesConnected) {
+			mLocationClient = new LocationClient(this, this, this);
+			
+			mLocationRequest = LocationRequest.create();
+			mLocationRequest.setPriority(fusedLocationPriority);
+			mLocationRequest.setInterval(refreshInterval * Constants.MILLIS_PER_SECOND);
+			mLocationRequest.setFastestInterval(refreshInterval * Constants.MILLIS_PER_SECOND);
+			
+			if(connectImmediately) {
+				mLocationClient.connect();
+			}
+		}
 	}
 }
