@@ -168,4 +168,21 @@
             android:text="@string/balanced_power" />
     </RadioGroup>
 
+    <TextView
+        android:id="@+id/lblType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/lblAltitude"
+        android:layout_below="@+id/lblAltitude"
+        android:text="@string/type" />
+
+    <TextView
+        android:id="@+id/txtType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/lblType"
+        android:layout_alignBottom="@+id/lblType"
+        android:layout_toRightOf="@+id/lblAccuracy"
+        android:text="type placeholder" />
+
 </RelativeLayout>
