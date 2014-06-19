@@ -36,7 +36,6 @@ public class MainActivity extends Activity implements
 	public static final String LOG_TAG = "Main Activity";
     // Update frequency in milliseconds
     private static final long UPDATE_INTERVAL = Constants.MILLIS_PER_SECOND * Constants.DEFAULT_REFRESH_INTERVAL_SECS;
-    private static final long FASTEST_INTERVAL = Constants.MILLIS_PER_SECOND * 10;
 
     private GooglePlayHelper mGooglePlayHelper;
     private boolean mServicesConnected;
@@ -50,6 +49,7 @@ public class MainActivity extends Activity implements
     TextView txtLongitude;
     TextView txtSpeed;
     TextView txtAltitude;
+    TextView txtType;
     
     EditText txtRefreshInterval;
     RadioGroup radioGroupFusedProviderType;
@@ -82,6 +82,9 @@ public class MainActivity extends Activity implements
         txtRefreshInterval = (EditText) findViewById(R.id.txtRefreshInterval);
         txtRefreshInterval.setText(Integer.toString(Constants.DEFAULT_REFRESH_INTERVAL_SECS));
         
+        txtType = (TextView) findViewById(R.id.txtType);
+        txtType.setText(Constants.HIGH_ACCURACY);
+        
         radioGroupFusedProviderType = (RadioGroup) findViewById(R.id.radioFusedProviderType);
         radioGroupFusedProviderType.check(R.id.radioHighAccuracy);
         
@@ -95,8 +98,14 @@ public class MainActivity extends Activity implements
 				int refreshInterval = Integer.valueOf(txtRefreshInterval.getText().toString());
 				
 				int checkedButton = radioGroupFusedProviderType.getCheckedRadioButtonId();
-				int fusedProviderType = (checkedButton == R.id.radioHighAccuracy) ? 
-						LocationRequest.PRIORITY_HIGH_ACCURACY : LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY; 
+				int fusedProviderType = -1;
+				if(checkedButton == R.id.radioHighAccuracy) {
+					fusedProviderType = LocationRequest.PRIORITY_HIGH_ACCURACY;
+					txtType.setText(Constants.HIGH_ACCURACY);
+				} else {
+					fusedProviderType = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
+					txtType.setText(Constants.BALANCED_POWER);
+				}
 				
 				Intent startIntent = new Intent(v.getContext(), LocationBackgroundService.class);
 				startIntent.putExtra(Constants.FUSED_PROVIDER_TYPE_EXTRA, fusedProviderType);
@@ -183,7 +192,7 @@ public class MainActivity extends Activity implements
 		Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
 		Log.d(LOG_TAG, "Connected Location Client");
 
-		Log.d(LOG_TAG, "Requesting Location Updates");
+		Log.d(LOG_TAG, "Requesting Location Updates.");
 		mLocationClient.requestLocationUpdates(mLocationRequest, this);
 	}
 

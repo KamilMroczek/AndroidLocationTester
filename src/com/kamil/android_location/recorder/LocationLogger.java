@@ -1,10 +1,15 @@
 package com.kamil.android_location.recorder;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import android.content.Context;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -17,9 +22,7 @@ import com.kamil.android_location.Constants;
 
 public class LocationLogger implements GooglePlayServicesClient.ConnectionCallbacks,
 		GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
-	
-	// A fast frequency ceiling in milliseconds
-    private static final long FASTEST_INTERVAL = Constants.MILLIS_PER_SECOND * 10;
+
     private Logger LOCATION_LOG = LoggerFactory.getLogger(LocationLogger.class);
     private final String logTag;
     private boolean started;
@@ -28,6 +31,9 @@ public class LocationLogger implements GooglePlayServicesClient.ConnectionCallba
     private LocationRequest mLocationRequest;
     private int fusedProviderPriority;
     private int intervalBetweenUpdates;
+    private LocationManager locationManager;
+    
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
     
     public LocationLogger(String tag, int priority, int refreshIntervalSecs) { 
     	logTag = tag;
@@ -46,6 +52,8 @@ public class LocationLogger implements GooglePlayServicesClient.ConnectionCallba
 		
     	mLocationClient = new LocationClient(context, this, this);
 		mLocationClient.connect();
+		
+		locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 		
 		started = true;
     }
@@ -71,9 +79,12 @@ public class LocationLogger implements GooglePlayServicesClient.ConnectionCallba
 		Log.d(logTag, "Received Location Update");
 		
 		String locationLine = logTag; 
-		locationLine += "," + location.getProvider() + "," + location.getTime() + "," + intervalBetweenUpdates; 
+		Date date = new Date(location.getTime());
+		locationLine += "," + location.getProvider() + "," + location.getTime() + "," + DATE_FORMAT.format(date);
+		locationLine += "," + (intervalBetweenUpdates / 1000); 
 		locationLine += "," + location.getAccuracy() + "," + location.getLatitude() + "," + location.getLongitude();
 		locationLine += "," + location.getSpeed() + "," + location.getBearing() + "," + location.getAltitude();
+		locationLine += "," + isGpsOn() + "," + isNetworkOn();
 		
 		Log.d(logTag, locationLine);
 		LOCATION_LOG.info(locationLine);
@@ -86,13 +97,39 @@ public class LocationLogger implements GooglePlayServicesClient.ConnectionCallba
 
 	@Override
 	public void onConnected(Bundle arg0) {
-		Log.d(logTag, "Connected Location Client. Requesting Location Updates");
+		Log.d(logTag, "Connected Location Client. Requesting Location Updates. Interval=" + (intervalBetweenUpdates / 1000));
 		mLocationClient.requestLocationUpdates(mLocationRequest, this);
 	}
 
 	@Override
 	public void onDisconnected() {
 		Log.d(logTag, "Disconnected Location Client");
+	}
+	
+	private int isGpsOn() {
+		if(locationManager == null) {
+			return 0;
+		}
+		
+	    try {
+	      return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ? 1 : 0;
+	    } catch (Exception ex) {
+	    	Log.d(logTag, "Error checking for GPS. " + ex.getMessage());
+	    	return 0;
+	    }
+	}
+	
+	private int isNetworkOn() {
+		if(locationManager == null) {
+			return 0;
+		}
+
+	    try {
+	      return locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER) ? 1 : 0;
+	    } catch (Exception ex) {
+	    	Log.d(logTag, "Error checking for Network. " + ex.getMessage());
+	    	return 0;
+	    }
 	}
 	
     public boolean isStarted() {
