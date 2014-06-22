@@ -12,27 +12,32 @@ import com.kamil.android_location.Constants;
 
 public class LocationUpdateManager implements ILocationUpdateManager {
 
-    private final String logTag;
+    private final String providerType;
     private boolean started;
     
     private LocationClient mLocationClient;
     private LocationRequest mLocationRequest;
     private int fusedProviderPriority;
-    private int intervalBetweenUpdatesMillis;
+    private int intervalBetweenUpdatesSecs;
     
     private ILocationRecorder locationRecorder;
+    private UserLocationBuilder userLocationBuilder;
     
-    public LocationUpdateManager(ILocationRecorder recorder, String tag, int priority, int refreshIntervalSecs) {
-    	locationRecorder = recorder;
-    	logTag = tag;
-    	started = false;
-    	this.fusedProviderPriority = priority;
-    	intervalBetweenUpdatesMillis = Constants.MILLIS_PER_SECOND * refreshIntervalSecs;
-    }
+	public LocationUpdateManager(ILocationRecorder recorder, UserLocationBuilder builder, String type, int priority,
+			int refreshIntervalSecs) {
+		locationRecorder = recorder;
+		userLocationBuilder = builder;
+
+		this.providerType = type;
+		this.started = false;
+		this.fusedProviderPriority = priority;
+		this.intervalBetweenUpdatesSecs = refreshIntervalSecs;
+	}
     
     public void start(Context context) {
-    	Log.d(logTag, "Starting Location Logger: " + logTag);
+    	Log.d(providerType, "Starting Location Logger: " + providerType);
 
+    	int intervalBetweenUpdatesMillis = intervalBetweenUpdatesSecs * Constants.MILLIS_PER_SECOND; 
     	mLocationRequest = LocationRequest.create();
     	mLocationRequest.setFastestInterval(intervalBetweenUpdatesMillis);
 		mLocationRequest.setPriority(this.fusedProviderPriority);
@@ -45,10 +50,10 @@ public class LocationUpdateManager implements ILocationUpdateManager {
     }
     
 	public void stop() {
-		Log.d(logTag, "Stopping Location Logger: " + logTag);
+		Log.d(providerType, "Stopping Location Logger: " + providerType);
 		if (mLocationClient != null) {
 			if (mLocationClient.isConnected()) {
-				Log.d(logTag, "Stopping location updates.");
+				Log.d(providerType, "Stopping location updates.");
 				mLocationClient.removeLocationUpdates(this);
 			}
 
@@ -59,23 +64,24 @@ public class LocationUpdateManager implements ILocationUpdateManager {
 
 	@Override
 	public void onLocationChanged(Location newLocation) {
-		locationRecorder.record(newLocation);
+		Log.d(providerType, "Received Location Update");
+		locationRecorder.record(userLocationBuilder.build(newLocation));
 	}
 
 	@Override
 	public void onConnectionFailed(ConnectionResult arg0) {
-		Log.d(logTag, "Connection failed for Location Client");
+		Log.d(providerType, "Connection failed for Location Client");
 	}
 
 	@Override
 	public void onConnected(Bundle arg0) {
-		Log.d(logTag, "Connected Location Client. Requesting Location Updates. Interval=" + (intervalBetweenUpdatesMillis / 1000));
+		Log.d(providerType, "Connected Location Client. Requesting Location Updates. Interval=" + intervalBetweenUpdatesSecs);
 		mLocationClient.requestLocationUpdates(mLocationRequest, this);
 	}
 
 	@Override
 	public void onDisconnected() {
-		Log.d(logTag, "Disconnected Location Client");
+		Log.d(providerType, "Disconnected Location Client");
 	}
 		
     public boolean isStarted() {

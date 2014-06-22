@@ -1,7 +1,7 @@
 package com.kamil.android_location.recorder;
 
-import android.location.Location;
+import com.kamil.android_location.UserLocation;
 
 public interface ILocationRecorder {
-	void record(Location location);
+	void record(UserLocation location);
 }

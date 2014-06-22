@@ -9,6 +9,7 @@ import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.kamil.android_location.android.GooglePlayHelper;
 import com.kamil.android_location.background.LocationBackgroundService;
 
 import android.app.Activity;
