@@ -3,7 +3,7 @@ package com.kamil.android_location.background;
 import com.google.android.gms.location.LocationRequest;
 import com.kamil.android_location.Constants;
 import com.kamil.android_location.GooglePlayHelper;
-import com.kamil.android_location.recorder.LocationLogger;
+import com.kamil.android_location.recorder.LocationUpdateManager;
 
 import android.app.Service;
 import android.content.Intent;
@@ -14,7 +14,7 @@ public class LocationBackgroundService extends Service {
 
 	private GooglePlayHelper mGooglePlayHelper;
 	private boolean mServicesConnected;
-	private LocationLogger mLocationLogger;
+	private LocationUpdateManager mLocationLogger;
 	
 	private static final String LOG_TAG = "Location Background Service";
 	
@@ -38,7 +38,7 @@ public class LocationBackgroundService extends Service {
         return START_REDELIVER_INTENT;
     }
     
-    private LocationLogger parseIntentAndCreateLogger(Intent intent) {
+    private LocationUpdateManager parseIntentAndCreateLogger(Intent intent) {
     	int requestType = intent.getIntExtra(Constants.FUSED_PROVIDER_TYPE_EXTRA, LocationRequest.PRIORITY_HIGH_ACCURACY); 
     	String providerType = (requestType == LocationRequest.PRIORITY_HIGH_ACCURACY) ? Constants.HIGH_ACCURACY : Constants.BALANCED_POWER;
     	
@@ -46,7 +46,7 @@ public class LocationBackgroundService extends Service {
     	
     	Log.d(LOG_TAG, "Received start. Type=" + providerType + ", interval=" + refreshIntervalSecs);
     	
-    	return new LocationLogger(providerType, requestType, refreshIntervalSecs);
+    	return new LocationUpdateManager(providerType, requestType, refreshIntervalSecs);
     }
 
     @Override

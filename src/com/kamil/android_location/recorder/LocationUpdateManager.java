@@ -13,17 +13,14 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.location.LocationClient;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.kamil.android_location.Constants;
 import com.kamil.android_location.DeviceServices;
 
-public class LocationLogger implements GooglePlayServicesClient.ConnectionCallbacks,
-		GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
+public class LocationUpdateManager implements ILocationUpdaterManager {
 
-    private Logger LOCATION_LOG = LoggerFactory.getLogger(LocationLogger.class);
+    private Logger LOCATION_LOG = LoggerFactory.getLogger(LocationUpdateManager.class);
     private final String logTag;
     private boolean started;
     
@@ -36,7 +33,7 @@ public class LocationLogger implements GooglePlayServicesClient.ConnectionCallba
     
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
     
-    public LocationLogger(String tag, int priority, int refreshIntervalSecs) { 
+    public LocationUpdateManager(String tag, int priority, int refreshIntervalSecs) { 
     	logTag = tag;
     	started = false;
     	this.fusedProviderPriority = priority;
