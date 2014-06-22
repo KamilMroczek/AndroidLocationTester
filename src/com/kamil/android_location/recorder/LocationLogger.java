@@ -23,11 +23,13 @@ public class LocationLogger implements ILocationRecorder {
 	
 	private int refreshIntervalSecs;
 	private String providerType;
+	private String note;
 	
-	public LocationLogger(Context context, int intervalBetweenUpdatesSecs, String providerType) {
+	public LocationLogger(Context context, int intervalBetweenUpdatesSecs, String providerType, String note) {
 		deviceServices = new DeviceServices(context);
 		refreshIntervalSecs = intervalBetweenUpdatesSecs;
 		this.providerType = providerType;
+		this.note = note;
 	}
 	
 	@Override
@@ -40,7 +42,7 @@ public class LocationLogger implements ILocationRecorder {
 		locationLine += "," + refreshIntervalSecs;
 		locationLine += "," + location.getAccuracy() + "," + location.getLatitude() + "," + location.getLongitude();
 		locationLine += "," + location.getSpeed() + "," + location.getBearing() + "," + location.getAltitude();
-		locationLine += "," + deviceServices.isGpsOn() + "," + deviceServices.isNetworkOn();
+		locationLine += "," + deviceServices.isGpsOn() + "," + deviceServices.isNetworkOn() + "," + note;
 		
 		Log.d(providerType, locationLine);
 		LOCATION_LOG.info(locationLine);

@@ -52,6 +52,7 @@ public class MainActivity extends Activity implements
     TextView txtType;
     
     EditText txtRefreshInterval;
+    EditText txtNote;
     RadioGroup radioGroupFusedProviderType;
     
 	
@@ -85,6 +86,8 @@ public class MainActivity extends Activity implements
         txtType = (TextView) findViewById(R.id.txtType);
         txtType.setText(Constants.HIGH_ACCURACY);
         
+        txtNote = (EditText) findViewById(R.id.txtNote);
+        
         radioGroupFusedProviderType = (RadioGroup) findViewById(R.id.radioFusedProviderType);
         radioGroupFusedProviderType.check(R.id.radioHighAccuracy);
         
@@ -107,9 +110,12 @@ public class MainActivity extends Activity implements
 					txtType.setText(Constants.BALANCED_POWER);
 				}
 				
+				String note = txtNote.getText().toString();
+				
 				Intent startIntent = new Intent(v.getContext(), LocationBackgroundService.class);
 				startIntent.putExtra(Constants.FUSED_PROVIDER_TYPE_EXTRA, fusedProviderType);
 				startIntent.putExtra(Constants.REFRESH_INTERVAL_EXTRA, refreshInterval);
+				startIntent.putExtra(Constants.NOTE_EXTRA, note);
 				
 				startService(startIntent);
 				

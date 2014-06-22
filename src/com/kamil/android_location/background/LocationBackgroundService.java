@@ -44,12 +44,13 @@ public class LocationBackgroundService extends Service {
     private LocationUpdateManager parseIntentAndCreateManager(Intent intent) {
     	int requestType = intent.getIntExtra(Constants.FUSED_PROVIDER_TYPE_EXTRA, LocationRequest.PRIORITY_HIGH_ACCURACY); 
     	String providerType = (requestType == LocationRequest.PRIORITY_HIGH_ACCURACY) ? Constants.HIGH_ACCURACY : Constants.BALANCED_POWER;
+    	String note = intent.getStringExtra(Constants.NOTE_EXTRA);
     	
     	int refreshIntervalSecs = intent.getIntExtra(Constants.REFRESH_INTERVAL_EXTRA, 10);
     	
     	Log.d(LOG_TAG, "Received start. Type=" + providerType + ", interval=" + refreshIntervalSecs);
     	
-    	ILocationRecorder logRecorder = new LocationLogger(this, refreshIntervalSecs, providerType);
+    	ILocationRecorder logRecorder = new LocationLogger(this, refreshIntervalSecs, providerType, note);
     	return new LocationUpdateManager(logRecorder, providerType, requestType, refreshIntervalSecs);
     }
 
