@@ -1,4 +1,4 @@
-package com.kamil.android_location;
+package com.kamil.android_location.android;
 
 import android.content.Context;
 import android.location.LocationManager;

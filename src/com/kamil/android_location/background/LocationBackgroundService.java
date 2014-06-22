@@ -2,11 +2,12 @@ package com.kamil.android_location.background;
 
 import com.google.android.gms.location.LocationRequest;
 import com.kamil.android_location.Constants;
-import com.kamil.android_location.GooglePlayHelper;
+import com.kamil.android_location.android.GooglePlayHelper;
 import com.kamil.android_location.recorder.ILocationRecorder;
 import com.kamil.android_location.recorder.ILocationUpdateManager;
 import com.kamil.android_location.recorder.LocationLogger;
 import com.kamil.android_location.recorder.LocationUpdateManager;
+import com.kamil.android_location.recorder.UserLocationBuilder;
 
 import android.app.Service;
 import android.content.Intent;
@@ -50,8 +51,10 @@ public class LocationBackgroundService extends Service {
     	
     	Log.d(LOG_TAG, "Received start. Type=" + providerType + ", interval=" + refreshIntervalSecs);
     	
-    	ILocationRecorder logRecorder = new LocationLogger(this, refreshIntervalSecs, providerType, note);
-    	return new LocationUpdateManager(logRecorder, providerType, requestType, refreshIntervalSecs);
+    	ILocationRecorder logRecorder = new LocationLogger(this);
+    	UserLocationBuilder builder = new UserLocationBuilder(refreshIntervalSecs, providerType, note);
+    	
+		return new LocationUpdateManager(logRecorder, builder, providerType, requestType, refreshIntervalSecs);
     }
 
     @Override

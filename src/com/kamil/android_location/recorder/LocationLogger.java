@@ -7,10 +7,10 @@ import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.kamil.android_location.DeviceServices;
+import com.kamil.android_location.UserLocation;
+import com.kamil.android_location.android.DeviceServices;
 
 import android.content.Context;
-import android.location.Location;
 import android.util.Log;
 
 public class LocationLogger implements ILocationRecorder {
@@ -21,30 +21,22 @@ public class LocationLogger implements ILocationRecorder {
 	
 	private DeviceServices deviceServices;
 	
-	private int refreshIntervalSecs;
-	private String providerType;
-	private String note;
-	
-	public LocationLogger(Context context, int intervalBetweenUpdatesSecs, String providerType, String note) {
+	public LocationLogger(Context context) {
 		deviceServices = new DeviceServices(context);
-		refreshIntervalSecs = intervalBetweenUpdatesSecs;
-		this.providerType = providerType;
-		this.note = note;
 	}
 	
 	@Override
-	public void record(Location location) {
-		Log.d(providerType, "Received Location Update");
+	public void record(UserLocation update) {
+		String locationLine = update.getProviderType();
+		Date date = new Date(update.getTime());
 		
-		String locationLine = providerType; 
-		Date date = new Date(location.getTime());
-		locationLine += "," + location.getProvider() + "," + location.getTime() + "," + DATE_FORMAT.format(date);
-		locationLine += "," + refreshIntervalSecs;
-		locationLine += "," + location.getAccuracy() + "," + location.getLatitude() + "," + location.getLongitude();
-		locationLine += "," + location.getSpeed() + "," + location.getBearing() + "," + location.getAltitude();
-		locationLine += "," + deviceServices.isGpsOn() + "," + deviceServices.isNetworkOn() + "," + note;
+		locationLine += "," + update.getTime() + "," + DATE_FORMAT.format(date);
+		locationLine += "," + update.getIntervalRefreshSecs();
+		locationLine += "," + update.getAccuracy() + "," + update.getLatitude() + "," + update.getLongitude();
+		locationLine += "," + update.getSpeed() + "," + update.getBearing() + "," + update.getAltitude();
+		locationLine += "," + deviceServices.isGpsOn() + "," + deviceServices.isNetworkOn() + "," + update.getNote();
 		
-		Log.d(providerType, locationLine);
+		Log.d("Location Log", locationLine);
 		LOCATION_LOG.info(locationLine);
 	}
 
