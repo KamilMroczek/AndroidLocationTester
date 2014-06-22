@@ -5,7 +5,7 @@ import com.google.android.gms.location.LocationListener;
 
 import android.content.Context;
 
-public interface ILocationUpdaterManager extends GooglePlayServicesClient.ConnectionCallbacks,
+public interface ILocationUpdateManager extends GooglePlayServicesClient.ConnectionCallbacks,
 		GooglePlayServicesClient.OnConnectionFailedListener, LocationListener {
 
 	void start(Context context);
