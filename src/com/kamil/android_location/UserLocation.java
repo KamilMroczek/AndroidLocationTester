@@ -24,6 +24,7 @@ public class UserLocation {
 	private final int gpsOn;
 	@SerializedName("network_on")
 	private final int networkOn;
+	private final String device;
 	
 	public UserLocation(Location location, DeviceServices deviceServices, int intervalSecs, String provider, String note) {
 		this.intervalRefreshSecs = intervalSecs;
@@ -40,6 +41,7 @@ public class UserLocation {
 		
 		this.gpsOn = deviceServices.isGpsOn();
 		this.networkOn = deviceServices.isNetworkOn();
+		this.device = deviceServices.getAndroidId();
 	}
 
 	public int getIntervalRefreshSecs() {
@@ -88,5 +90,9 @@ public class UserLocation {
 
 	public int getNetworkOn() {
 		return networkOn;
+	}
+	
+	public String getDevice() {
+		return device;
 	}
 }

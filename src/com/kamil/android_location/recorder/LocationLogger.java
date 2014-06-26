@@ -35,6 +35,7 @@ public class LocationLogger implements ILocationRecorder {
 		locationLine += "," + update.getAccuracy() + "," + update.getLatitude() + "," + update.getLongitude();
 		locationLine += "," + update.getSpeed() + "," + update.getBearing() + "," + update.getAltitude();
 		locationLine += "," + deviceServices.isGpsOn() + "," + deviceServices.isNetworkOn() + "," + update.getNote();
+		locationLine += "," + deviceServices.getAndroidId();
 		
 		Log.d("Location Log", locationLine);
 		LOCATION_LOG.info(locationLine);
