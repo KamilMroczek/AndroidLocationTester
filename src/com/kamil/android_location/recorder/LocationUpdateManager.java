@@ -27,11 +27,12 @@ public class LocationUpdateManager implements ILocationUpdateManager {
 			int refreshIntervalSecs) {
 		locationRecorder = recorder;
 		userLocationBuilder = builder;
-
+		
 		this.providerType = type;
 		this.started = false;
 		this.fusedProviderPriority = priority;
 		this.intervalBetweenUpdatesSecs = refreshIntervalSecs;
+		
 	}
     
     public void start(Context context) {

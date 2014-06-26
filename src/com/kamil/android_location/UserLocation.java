@@ -1,21 +1,31 @@
 package com.kamil.android_location;
 
+import com.google.gson.annotations.SerializedName;
+import com.kamil.android_location.android.DeviceServices;
+
 import android.location.Location;
 
 public class UserLocation {
 	
+	@SerializedName("refresh_secs")
 	private final int intervalRefreshSecs;
+	@SerializedName("provider_type")
 	private final String providerType;
 	private final String note;
+	@SerializedName("time")
 	private final long time;
 	private final float accuracy;
 	private final double latitude;
 	private final double longitude;
 	private final float speed;
 	private final float bearing;
-	private final double altitude;	
+	private final double altitude;
+	@SerializedName("gps_on")
+	private final int gpsOn;
+	@SerializedName("network_on")
+	private final int networkOn;
 	
-	public UserLocation(Location location, int intervalSecs, String provider, String note) {
+	public UserLocation(Location location, DeviceServices deviceServices, int intervalSecs, String provider, String note) {
 		this.intervalRefreshSecs = intervalSecs;
 		this.note = note;
 		this.providerType = provider;
@@ -27,6 +37,9 @@ public class UserLocation {
 		this.speed = location.getSpeed();
 		this.bearing = location.getBearing();
 		this.altitude = location.getAltitude();
+		
+		this.gpsOn = deviceServices.isGpsOn();
+		this.networkOn = deviceServices.isNetworkOn();
 	}
 
 	public int getIntervalRefreshSecs() {
@@ -67,5 +80,13 @@ public class UserLocation {
 
 	public double getAltitude() {
 		return altitude;
+	}
+
+	public int getGpsOn() {
+		return gpsOn;
+	}
+
+	public int getNetworkOn() {
+		return networkOn;
 	}
 }
