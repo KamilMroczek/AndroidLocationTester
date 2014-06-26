@@ -2,16 +2,18 @@ package com.kamil.android_location.android;
 
 import android.content.Context;
 import android.location.LocationManager;
+import android.provider.Settings.Secure;
 import android.util.Log;
 
 public class DeviceServices {
-
-	private LocationManager locationManager;
-	
 	private static final String LOG_TAG = "Device Services";
+	
+	private LocationManager locationManager;
+	private final String androidId;
 	
 	public DeviceServices(Context context) {
 		locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+		androidId = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID); 
 	}
 	
 	public int isGpsOn() {
@@ -39,5 +41,8 @@ public class DeviceServices {
 	    	return 0;
 	    }
 	}
-
+	
+	public String getAndroidId() {
+		return androidId;
+	}
 }
