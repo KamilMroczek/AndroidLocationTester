@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.kamil.android_location"
-        minSdkVersion 11
+        minSdkVersion 14
         targetSdkVersion 19
     }
 
