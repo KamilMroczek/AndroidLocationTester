@@ -11,9 +11,15 @@ import com.kamil.android_location.recorder.LocationSender;
 import com.kamil.android_location.recorder.LocationUpdateManager;
 import com.kamil.android_location.recorder.UserLocationBuilder;
 
+import android.annotation.TargetApi;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.util.Log;
 
 public class LocationBackgroundService extends Service {
@@ -23,6 +29,9 @@ public class LocationBackgroundService extends Service {
 	private ILocationUpdateManager mLocationUpdaterManager;
 	
 	private static final String LOG_TAG = "Location Background Service";
+
+    private int requestType;
+    private int refreshIntervalSecs;
 	
 	@Override
     public void onCreate() {
@@ -41,15 +50,17 @@ public class LocationBackgroundService extends Service {
         		mLocationUpdaterManager.start(this.getApplicationContext());
         	}
 		}
-        return START_REDELIVER_INTENT;
+
+        return START_STICKY;
     }
     
     private LocationUpdateManager parseIntentAndCreateManager(Intent intent) {
-    	int requestType = intent.getIntExtra(Constants.FUSED_PROVIDER_TYPE_EXTRA, LocationRequest.PRIORITY_HIGH_ACCURACY); 
-    	String providerType = (requestType == LocationRequest.PRIORITY_HIGH_ACCURACY) ? Constants.HIGH_ACCURACY : Constants.BALANCED_POWER;
+    	this.requestType = intent.getIntExtra(Constants.FUSED_PROVIDER_TYPE_EXTRA, LocationRequest.PRIORITY_HIGH_ACCURACY);
+    	String providerType = (this.requestType == LocationRequest.PRIORITY_HIGH_ACCURACY) ? Constants.HIGH_ACCURACY : Constants.BALANCED_POWER;
+
     	String note = intent.getStringExtra(Constants.NOTE_EXTRA);
     	
-    	int refreshIntervalSecs = intent.getIntExtra(Constants.REFRESH_INTERVAL_EXTRA, 10);
+    	this.refreshIntervalSecs = intent.getIntExtra(Constants.REFRESH_INTERVAL_EXTRA, 10);
     	
     	Log.d(LOG_TAG, "Received start. Type=" + providerType + ", interval=" + refreshIntervalSecs);
     	
@@ -62,7 +73,7 @@ public class LocationBackgroundService extends Service {
     @Override
 	public void onDestroy() {
 		Log.d(LOG_TAG, "Stop service.");
-		
+
 		mLocationUpdaterManager.stop();
 		super.onDestroy();
 	}
@@ -72,4 +83,10 @@ public class LocationBackgroundService extends Service {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    // TODO: Implement to save power
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+    }
 }
