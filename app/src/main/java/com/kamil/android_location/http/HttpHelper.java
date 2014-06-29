@@ -1,4 +1,4 @@
-package com.kamil.android_location;
+package com.kamil.android_location.http;
 
 import java.io.IOException;
 

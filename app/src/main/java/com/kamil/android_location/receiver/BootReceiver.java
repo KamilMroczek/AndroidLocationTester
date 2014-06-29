@@ -16,6 +16,7 @@ public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d("Boot Service", "Received intent=" + intent.getAction());
+
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction()))
         {
             Intent startIntent = new Intent(context, LocationBackgroundService.class);
@@ -23,7 +24,8 @@ public class BootReceiver extends BroadcastReceiver {
             startIntent.putExtra(Constants.REFRESH_INTERVAL_EXTRA, 10);
             startIntent.putExtra(Constants.NOTE_EXTRA, "");
 
-            context.startService(startIntent);
+            //TODO: Stopped this for now
+//            context.startService(startIntent);
         }
     }
 }
