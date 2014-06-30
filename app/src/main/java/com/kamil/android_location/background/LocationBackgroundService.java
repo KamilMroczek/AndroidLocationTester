@@ -7,6 +7,8 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.kamil.android_location.android.DeviceServices;
+import com.kamil.android_location.geofence.GeofenceManager;
+import com.kamil.android_location.geofence.IGeofenceManager;
 import com.kamil.android_location.http.HttpHelper;
 import com.kamil.android_location.manager.ILocationClientManager;
 import com.kamil.android_location.manager.ILocationUpdateManager;
@@ -18,10 +20,9 @@ public class LocationBackgroundService extends Service {
     private ILocationClientManager locationClientManager;
 	private static final String LOG_TAG = "Location Background Service";
 
-
 	@Override
     public void onCreate() {
-        locationClientManager = new LocationClientManager();
+        locationClientManager = new LocationClientManager(getApplicationContext());
 	}
 
     // TODO: add ability for only one instance of service to be running
@@ -29,13 +30,16 @@ public class LocationBackgroundService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(LOG_TAG, "Start service.");
 
-        Context context = getApplicationContext();
-
         LocationUpdateManagerFactory locationUpdateManagerFactory =
-                new LocationUpdateManagerFactory(new HttpHelper(), new DeviceServices(context));
+                new LocationUpdateManagerFactory(new HttpHelper(), new DeviceServices(getApplicationContext()));
+        if(intent == null) {
+            Log.d(LOG_TAG, "Intent is null");
+        }
         ILocationUpdateManager locationUpdateManager = locationUpdateManagerFactory.build(intent);
 
-        locationClientManager.connect(context, locationUpdateManager);
+        IGeofenceManager geofenceManager = GeofenceManager.getInstance();
+
+        locationClientManager.connect(locationUpdateManager, geofenceManager);
 
         return START_STICKY;
     }

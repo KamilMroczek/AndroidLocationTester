@@ -24,4 +24,5 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.6'
     compile 'com.android.support:support-v4:19.+'
     compile 'com.google.code.gson:gson:2.2.4'
+    compile 'com.google.guava:guava:17.0'
 }
