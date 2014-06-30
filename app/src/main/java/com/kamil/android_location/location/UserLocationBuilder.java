@@ -1,8 +1,8 @@
-package com.kamil.android_location.recorder;
+package com.kamil.android_location.location;
 
 import android.location.Location;
 
-import com.kamil.android_location.UserLocation;
+import com.kamil.android_location.location.UserLocation;
 import com.kamil.android_location.android.DeviceServices;
 
 public class UserLocationBuilder {

@@ -1,4 +1,4 @@
-package com.kamil.android_location;
+package com.kamil.android_location.location;
 
 import com.google.gson.annotations.SerializedName;
 import com.kamil.android_location.android.DeviceServices;

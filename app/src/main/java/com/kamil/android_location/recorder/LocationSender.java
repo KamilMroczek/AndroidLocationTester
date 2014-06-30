@@ -3,8 +3,8 @@ package com.kamil.android_location.recorder;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.kamil.android_location.HttpHelper;
-import com.kamil.android_location.UserLocation;
+import com.kamil.android_location.http.HttpHelper;
+import com.kamil.android_location.location.UserLocation;
 import com.kamil.android_location.background.SendUserLocationToServerTask;
 
 public class LocationSender implements ILocationRecorder {

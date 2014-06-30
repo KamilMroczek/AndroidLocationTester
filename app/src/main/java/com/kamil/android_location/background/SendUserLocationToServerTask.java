@@ -2,7 +2,7 @@ package com.kamil.android_location.background;
 
 import android.os.AsyncTask;
 
-import com.kamil.android_location.HttpHelper;
+import com.kamil.android_location.http.HttpHelper;
 
 public class SendUserLocationToServerTask extends AsyncTask<String, Void, Boolean> {
 
