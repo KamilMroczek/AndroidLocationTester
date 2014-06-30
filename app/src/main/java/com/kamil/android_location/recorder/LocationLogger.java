@@ -16,7 +16,7 @@ import android.util.Log;
 
 public class LocationLogger implements ILocationRecorder {
 
-	private Logger LOCATION_LOG = LoggerFactory.getLogger(LocationUpdateManager.class);
+	private Logger LOCATION_LOG = LoggerFactory.getLogger(LocationLogger.class);
 
 	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
 	

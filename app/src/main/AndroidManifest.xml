@@ -36,6 +36,10 @@
             android:name=".background.LocationBackgroundService"
             android:exported="false" />
 
+        <service
+            android:name="com.kamil.android_location.geofence.GeofenceActionService"
+            android:exported="true"/>
+
         <receiver
             android:name=".receiver.BootReceiver"
             android:enabled="true"
