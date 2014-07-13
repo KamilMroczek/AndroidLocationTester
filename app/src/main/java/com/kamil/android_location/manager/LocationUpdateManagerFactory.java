@@ -22,12 +22,36 @@ public class LocationUpdateManagerFactory {
     }
 
     public ILocationUpdateManager build(Intent intent) {
+        if(intent != null) {
+            return buildFromIntent(intent);
+        } else {
+            return buildDefault();
+        }
+    }
+
+    private ILocationUpdateManager buildFromIntent(Intent intent) {
         int requestType = intent.getIntExtra(Constants.FUSED_PROVIDER_TYPE_EXTRA, LocationRequest.PRIORITY_HIGH_ACCURACY);
         String providerType = (requestType == LocationRequest.PRIORITY_HIGH_ACCURACY) ? Constants.HIGH_ACCURACY : Constants.BALANCED_POWER;
 
         String note = intent.getStringExtra(Constants.NOTE_EXTRA);
 
         int refreshIntervalSecs = intent.getIntExtra(Constants.REFRESH_INTERVAL_EXTRA, 10);
+
+        Log.d(Constants.LOG_TAG, "Received start. Type=" + providerType + ", interval=" + refreshIntervalSecs);
+
+        ILocationRecorder logRecorder = new LocationSender(httpHelper);
+        UserLocationBuilder builder = new UserLocationBuilder(deviceServices, refreshIntervalSecs, providerType, note);
+
+        return new LocationUpdateManager(logRecorder, builder, providerType, requestType, refreshIntervalSecs);
+    }
+
+    private ILocationUpdateManager buildDefault() {
+        int requestType = LocationRequest.PRIORITY_HIGH_ACCURACY;
+        String providerType = Constants.HIGH_ACCURACY;
+
+        String note = "";
+
+        int refreshIntervalSecs = 10;
 
         Log.d(Constants.LOG_TAG, "Received start. Type=" + providerType + ", interval=" + refreshIntervalSecs);
 

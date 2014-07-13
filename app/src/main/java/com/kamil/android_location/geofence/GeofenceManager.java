@@ -33,6 +33,7 @@ public class GeofenceManager implements IGeofenceManager {
 
 
         basicGeofences.add(new BasicGeofence("1", "Kamil Apartment", 34.0718550d, -118.3814818d, 20.0f, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT));
+        basicGeofences.add(new BasicGeofence("2", "Eli's House", 34.045802d, -118.391353d, 30.0f, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT));
     }
 
     public BasicGeofence get(int i) {

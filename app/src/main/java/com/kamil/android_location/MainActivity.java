@@ -6,6 +6,8 @@ import java.util.Locale;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.internal.he;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -165,7 +167,12 @@ public class MainActivity extends Activity implements
     
     @Override
     protected void onResume() {
-    	super.onResume();
+        GooglePlayHelper helper = new GooglePlayHelper();
+        if(!helper.servicesConnected(this)) {
+            GooglePlayServicesUtil.getErrorDialog(helper.servicesResult(this),this, 0).show();
+        }
+        super.onResume();
+
     }
     
     // Define a DialogFragment that displays the error dialog
