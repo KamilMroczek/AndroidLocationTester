@@ -12,6 +12,7 @@ public class Constants {
 	public static final String FUSED_PROVIDER_TYPE_EXTRA = "fused_provider_type";
 	public static final String REFRESH_INTERVAL_EXTRA = "refresh_interval";
 	public static final String NOTE_EXTRA = "note";
+    public static final String BACKGROUND_TYPE_EXTRA = "background_type";
 
     public static final String LOG_TAG = "Android Kamil";
 	

@@ -1,19 +1,5 @@
 package com.kamil.android_location;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesClient;
-import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.internal.he;
-import com.google.android.gms.location.LocationClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationRequest;
-import com.kamil.android_location.android.GooglePlayHelper;
-import com.kamil.android_location.background.LocationBackgroundService;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -29,6 +15,19 @@ import android.widget.EditText;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.kamil.android_location.android.GooglePlayHelper;
+import com.kamil.android_location.background.LocationBackgroundService;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends Activity implements
 		GooglePlayServicesClient.ConnectionCallbacks,
@@ -57,6 +56,7 @@ public class MainActivity extends Activity implements
     EditText txtRefreshInterval;
     EditText txtNote;
     RadioGroup radioGroupFusedProviderType;
+    RadioGroup radioGroupBackgroundType;
     
 	
     @Override
@@ -93,6 +93,8 @@ public class MainActivity extends Activity implements
         
         radioGroupFusedProviderType = (RadioGroup) findViewById(R.id.radioFusedProviderType);
         radioGroupFusedProviderType.check(R.id.radioHighAccuracy);
+
+        radioGroupBackgroundType = (RadioGroup) findViewById(R.id.radioGroupBackgroundType);
         
         Button btnStartBackground = (Button) findViewById(R.id.btnStartBackground);
         btnStartBackground.setOnClickListener(new OnClickListener() {
@@ -114,11 +116,18 @@ public class MainActivity extends Activity implements
 				}
 				
 				String note = txtNote.getText().toString();
+
+                int checkedBackgroundButton = radioGroupBackgroundType.getCheckedRadioButtonId();
+                String background_type = "geofence";
+                if(checkedBackgroundButton == R.id.radioLocation) {
+                    background_type = "location";
+                }
 				
 				Intent startIntent = new Intent(v.getContext(), LocationBackgroundService.class);
 				startIntent.putExtra(Constants.FUSED_PROVIDER_TYPE_EXTRA, fusedProviderType);
 				startIntent.putExtra(Constants.REFRESH_INTERVAL_EXTRA, refreshInterval);
 				startIntent.putExtra(Constants.NOTE_EXTRA, note);
+                startIntent.putExtra(Constants.BACKGROUND_TYPE_EXTRA, background_type);
 				
 				startService(startIntent);
 				

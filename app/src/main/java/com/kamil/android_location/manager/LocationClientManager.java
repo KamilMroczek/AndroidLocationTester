@@ -29,6 +29,8 @@ public class LocationClientManager implements ILocationClientManager {
 
     private boolean requestedLocationUpdates;
 
+    private String type = "geofence";
+
 
     public LocationClientManager(Context context) {
         mGooglePlayHelper = new GooglePlayHelper();
@@ -38,8 +40,10 @@ public class LocationClientManager implements ILocationClientManager {
     }
 
     @Override
-    public void connect(ILocationUpdateManager locationUpdateManager, IGeofenceManager geofenceManager) {
-        Log.d(Constants.LOG_TAG, "Trying to connect location client.");
+    public void connect(ILocationUpdateManager locationUpdateManager, IGeofenceManager geofenceManager, String type) {
+        Log.d(Constants.LOG_TAG, "Trying to connect location client. " + type);
+
+        this.type = type;
 
         mLocationUpdaterManager = locationUpdateManager;
         mGeofenceManager = geofenceManager;
@@ -76,12 +80,12 @@ public class LocationClientManager implements ILocationClientManager {
         Log.d(Constants.LOG_TAG, "Connected location client.");
 
         if (!requestedLocationUpdates) {
-            if(mLocationUpdaterManager != null) {
+            if(mLocationUpdaterManager != null && type.equals("location")) {
                 LocationRequest locationRequest = mLocationUpdaterManager.getLocationRequest();
                 mLocationClient.requestLocationUpdates(locationRequest, mLocationUpdaterManager);
             }
 
-            if(mGeofenceManager != null) {
+            if(mGeofenceManager != null && type.equals("geofence")) {
                 List<Geofence> geofences = mGeofenceManager.buildGeofences();
 
                 Intent intent = new Intent(context, GeofenceActionService.class);
