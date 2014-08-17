@@ -80,12 +80,12 @@ public class LocationClientManager implements ILocationClientManager {
         Log.d(Constants.LOG_TAG, "Connected location client.");
 
         if (!requestedLocationUpdates) {
-            if(mLocationUpdaterManager != null && type.equals("location")) {
+            if(mLocationUpdaterManager != null/* && type.equals("location")*/) {
                 LocationRequest locationRequest = mLocationUpdaterManager.getLocationRequest();
                 mLocationClient.requestLocationUpdates(locationRequest, mLocationUpdaterManager);
             }
 
-            if(mGeofenceManager != null && type.equals("geofence")) {
+            if(mGeofenceManager != null /*&& type.equals("geofence")*/) {
                 List<Geofence> geofences = mGeofenceManager.buildGeofences();
 
                 Intent intent = new Intent(context, GeofenceActionService.class);
