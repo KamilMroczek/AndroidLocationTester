@@ -68,7 +68,7 @@ public class MainActivity extends Activity implements
 
         mGooglePlayHelper = new GooglePlayHelper();
         
-        connectLocationClient(LocationRequest.PRIORITY_HIGH_ACCURACY, UPDATE_INTERVAL, false);
+//        connectLocationClient(LocationRequest.PRIORITY_HIGH_ACCURACY, UPDATE_INTERVAL, false);
     }
     
     private void setupControls() {
@@ -131,7 +131,7 @@ public class MainActivity extends Activity implements
 				
 				startService(startIntent);
 				
-				restartUILocationUpdates(fusedProviderType, refreshInterval);
+//				restartUILocationUpdates(fusedProviderType, refreshInterval);
 			}
 		});
         
