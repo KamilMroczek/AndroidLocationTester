@@ -24,6 +24,16 @@ public class GeofenceManager implements IGeofenceManager {
         return INSTANCE;
     }
 
+    private String geofenceTag = "";
+
+    public String getGeofenceTag() {
+        return geofenceTag;
+    }
+
+    public void setGeofenceTag(String newTag) {
+        geofenceTag = newTag;
+    }
+
     private GeofenceManager() {
         fillList();
     }
