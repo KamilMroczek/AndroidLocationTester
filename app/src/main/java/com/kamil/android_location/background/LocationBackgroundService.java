@@ -1,11 +1,11 @@
 package com.kamil.android_location.background;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.kamil.android_location.Constants;
 import com.kamil.android_location.android.DeviceServices;
 import com.kamil.android_location.geofence.GeofenceManager;
 import com.kamil.android_location.geofence.IGeofenceManager;
@@ -39,7 +39,9 @@ public class LocationBackgroundService extends Service {
 
         IGeofenceManager geofenceManager = GeofenceManager.getInstance();
 
-        locationClientManager.connect(locationUpdateManager, geofenceManager);
+        String background_type = intent.getStringExtra(Constants.BACKGROUND_TYPE_EXTRA);
+
+        locationClientManager.connect(locationUpdateManager, geofenceManager, background_type);
 
         return START_STICKY;
     }

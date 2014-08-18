@@ -46,10 +46,12 @@ public class GeofenceActionService extends IntentService {
         switch(transitionType) {
             case Geofence.GEOFENCE_TRANSITION_ENTER:
                 transitionText = "Entered " + basicGeofence.getDescription();
+                manager.setGeofenceTag(basicGeofence.getDescription());
                 Log.d(LOG_TAG, "Received geofence ENTER event");
                 break;
             case Geofence.GEOFENCE_TRANSITION_EXIT:
                 transitionText = "Exited " + basicGeofence.getDescription();
+                manager.setGeofenceTag("");
                 Log.d(LOG_TAG, "Received geofence EXIT event");
                 break;
             case Geofence.GEOFENCE_TRANSITION_DWELL:

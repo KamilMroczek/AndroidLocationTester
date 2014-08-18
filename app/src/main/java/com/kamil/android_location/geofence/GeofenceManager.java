@@ -24,6 +24,16 @@ public class GeofenceManager implements IGeofenceManager {
         return INSTANCE;
     }
 
+    private String geofenceTag = "";
+
+    public String getGeofenceTag() {
+        return geofenceTag;
+    }
+
+    public void setGeofenceTag(String newTag) {
+        geofenceTag = newTag;
+    }
+
     private GeofenceManager() {
         fillList();
     }
@@ -31,9 +41,30 @@ public class GeofenceManager implements IGeofenceManager {
     private void fillList() {
         basicGeofences = new ArrayList<BasicGeofence>();
 
-
         basicGeofences.add(new BasicGeofence("1", "Kamil Apartment", 34.0718550d, -118.3814818d, 20.0f, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT));
         basicGeofences.add(new BasicGeofence("2", "Eli's House", 34.045802d, -118.391353d, 30.0f, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT));
+
+        basicGeofences.add(new BasicGeofence("3", "Nonnas (5)", 34.073489d, -118.379223d, 5.0f, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT));
+        basicGeofences.add(new BasicGeofence("4", "Subway (8)", 34.073128d, -118.376803d, 8.0f, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT));
+        basicGeofences.add(new BasicGeofence("5", "Chipotle (10)", 34.074452d, -118.376796d, 10.0f, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT));
+        basicGeofences.add(new BasicGeofence("6", "Coffee Bean (15)", 34.073066d, -118.376245d, 15.0f, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT));
+        basicGeofences.add(new BasicGeofence("7", "3rd Street Stattion (3)", 34.073213d, -118.375984d, 3.0f, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT));
+        basicGeofences.add(new BasicGeofence("8", "CVS (30)", 34.075533d, -118.375959d, 30.0f, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT));
+        basicGeofences.add(new BasicGeofence("9", "Mens Warehouse (5)", 34.074083d, -118.376372d, 5.0f, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT));
+        basicGeofences.add(new BasicGeofence("10", "Einstein Bro Bagels (8)", 34.073555d, -118.376084d, 8.0f, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT));
+        basicGeofences.add(new BasicGeofence("11", "Churchill (3)", 34.072846d, -118.372951d, 3.0f, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT));
+
+        basicGeofences.add(new BasicGeofence("12", "Colgate & Hamel (15)", 34.070807d, -118.381646d, 15.0f, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT));
+        basicGeofences.add(new BasicGeofence("13", "Colgate & Willamen (15)", 34.070847d, -118.380614d, 15.0f, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT));
+        basicGeofences.add(new BasicGeofence("14", "Willamen + Back (15)", 34.071682d, -118.380691d, 15.0f, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT));
+        basicGeofences.add(new BasicGeofence("15", "Side of Hamel (15)", 34.071860d, -118.381635d, 15.0f, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT));
+        basicGeofences.add(new BasicGeofence("16", "8670 Burton (15)", 34.072055d, -118.381422d, 15.0f, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT));
+
+        basicGeofences.add(new BasicGeofence("17", "Melrose Place (300)", 34.083656d, -118.372186d, 300.0f, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT));
+        basicGeofences.add(new BasicGeofence("18", "Melrose & LA Brea (200)", 34.083425d, -118.344012d, 200.0f, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT));
+        basicGeofences.add(new BasicGeofence("19", "Hollywood Bowl (500)", 34.109967d, -118.336041d, 500.0f, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT));
+        basicGeofences.add(new BasicGeofence("20", "John Burroughs (100)", 34.168873d, -118.325698d, 100.0f, Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_DWELL | Geofence.GEOFENCE_TRANSITION_EXIT));
+
     }
 
     public BasicGeofence get(int i) {

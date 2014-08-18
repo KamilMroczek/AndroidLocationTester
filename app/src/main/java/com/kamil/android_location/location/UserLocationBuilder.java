@@ -2,8 +2,8 @@ package com.kamil.android_location.location;
 
 import android.location.Location;
 
-import com.kamil.android_location.location.UserLocation;
 import com.kamil.android_location.android.DeviceServices;
+import com.kamil.android_location.geofence.GeofenceManager;
 
 public class UserLocationBuilder {
 
@@ -20,7 +20,9 @@ public class UserLocationBuilder {
 	}
 	
 	public UserLocation build(Location location) {
-		return new UserLocation(location, deviceServices, intervalRefreshSecs, providerType, note);
+    GeofenceManager manager = GeofenceManager.getInstance();
+    
+		return new UserLocation(location, deviceServices, intervalRefreshSecs, providerType, note + " (" + manager.getGeofenceTag() + ")");
 	}
 	
 }

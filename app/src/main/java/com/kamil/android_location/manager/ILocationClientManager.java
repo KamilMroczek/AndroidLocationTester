@@ -6,7 +6,7 @@ import com.kamil.android_location.geofence.IGeofenceManager;
 public interface ILocationClientManager extends GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener {
 
-    void connect(ILocationUpdateManager locationUpdateManager, IGeofenceManager geofenceManager);
+    void connect(ILocationUpdateManager locationUpdateManager, IGeofenceManager geofenceManager, String type);
 
     void disconnect();
 }

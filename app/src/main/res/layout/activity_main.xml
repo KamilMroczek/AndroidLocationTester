@@ -195,4 +195,26 @@
         android:layout_marginTop="14dp"
         android:ems="10" />
 
+    <RadioGroup
+        android:id="@+id/radioGroupBackgroundType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtNote"
+        android:layout_centerHorizontal="true">
+
+        <RadioButton
+            android:id="@+id/radioGeofence"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/geofence"/>
+
+        <RadioButton
+            android:id="@+id/radioLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/location"
+            android:checked="false"/>
+    </RadioGroup>
+
 </RelativeLayout>
