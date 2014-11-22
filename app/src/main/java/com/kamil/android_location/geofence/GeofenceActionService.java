@@ -8,8 +8,8 @@ import android.util.Log;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
-import com.kamil.android_location.com.kamil.android_location.notification.BasicNotificationBuilder;
-import com.kamil.android_location.com.kamil.android_location.notification.INotificationBuilder;
+import com.kamil.android_location.notification.BasicNotificationBuilder;
+import com.kamil.android_location.notification.INotificationBuilder;
 
 import java.util.List;
 

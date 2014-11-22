@@ -2,10 +2,11 @@ package com.kamil.android_location;
 
 public class Constants {
 
-  public static final int MILLIS_PER_SECOND = 1000;
+  public static final int NANOS_PER_SECOND = 1000000;
+  public static final int SECOND = 1000;
   public static final int SECONDS_PER_MINUTE = 60;
+  public static final int MINUTE = SECOND * SECONDS_PER_MINUTE;
   public static final int DEFAULT_REFRESH_INTERVAL_SECS = 10;
-
   public static final String HIGH_ACCURACY = "HighAccuracy";
   public static final String BALANCED_POWER = "BalancedPower";
   public static final String LOW_POWER = "LowPower";

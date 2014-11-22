@@ -1,4 +1,4 @@
-package com.kamil.android_location.com.kamil.android_location.notification;
+package com.kamil.android_location.notification;
 
 import android.app.Notification;
 

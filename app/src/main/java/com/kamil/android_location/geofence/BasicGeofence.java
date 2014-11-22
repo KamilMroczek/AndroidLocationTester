@@ -31,7 +31,7 @@ public class BasicGeofence {
                 .setExpirationDuration(Geofence.NEVER_EXPIRE);
 
         if((mTransitionType & Geofence.GEOFENCE_TRANSITION_DWELL) == Geofence.GEOFENCE_TRANSITION_DWELL) {
-            g.setLoiteringDelay(Constants.MILLIS_PER_SECOND * 10);
+            g.setLoiteringDelay(Constants.SECOND * 10);
         }
 
         return g.build();
