@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">Android_location</string>
+    <string name="app_name">Sense Location</string>
     <string name="Accuracy">Accuracy</string>
     <string name="Latitude">Latitude</string>
     <string name="Longitude">Longitude</string>
@@ -13,6 +13,8 @@
     <string name="refresh_interval">Refresh Rate (sec)</string>
     <string name="high_accuracy">High Accuracy</string>
     <string name="balanced_power">Balanced Power</string>
+    <string name="low_power">Low Power</string>
+    <string name="no_power">No Power</string>
     <string name="type">Type</string>
     <string name="title_activity_fullscreen">FullscreenActivity</string>
     <string name="dummy_button">Dummy Button</string>

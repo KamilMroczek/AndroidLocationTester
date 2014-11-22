@@ -1,8 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="${packageName}.${activityClass}" >
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context="${packageName}.${activityClass}">
 
     <TextView
         android:id="@+id/txtSpeed"
@@ -11,7 +11,7 @@
         android:layout_alignBaseline="@+id/lblSpeed"
         android:layout_alignBottom="@+id/lblSpeed"
         android:layout_centerHorizontal="true"
-        android:text="speed placeholder" />
+        android:text="speed placeholder"/>
 
     <TextView
         android:id="@+id/txtLatitude"
@@ -20,7 +20,7 @@
         android:layout_alignBaseline="@+id/lblLatitude"
         android:layout_alignBottom="@+id/lblLatitude"
         android:layout_toRightOf="@+id/lblAccuracy"
-        android:text="lat placeholder" />
+        android:text="lat placeholder"/>
 
     <TextView
         android:id="@+id/txtAltitude"
@@ -29,7 +29,7 @@
         android:layout_alignBaseline="@+id/lblAltitude"
         android:layout_alignBottom="@+id/lblAltitude"
         android:layout_centerHorizontal="true"
-        android:text="altitude placeholder" />
+        android:text="altitude placeholder"/>
 
     <TextView
         android:id="@+id/lblAccuracy"
@@ -40,7 +40,7 @@
         android:layout_marginTop="14dp"
         android:layout_toLeftOf="@+id/txtAltitude"
         android:text="@string/Accuracy"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"/>
 
     <TextView
         android:id="@+id/txtAccuracy"
@@ -49,7 +49,7 @@
         android:layout_alignBaseline="@+id/lblAccuracy"
         android:layout_alignBottom="@+id/lblAccuracy"
         android:layout_alignLeft="@+id/txtLatitude"
-        android:text="accuracy placeholder" />
+        android:text="accuracy placeholder"/>
 
     <TextView
         android:id="@+id/lblTime"
@@ -57,7 +57,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/lblAccuracy"
         android:layout_below="@+id/lblAccuracy"
-        android:text="@string/Time" />
+        android:text="@string/Time"/>
 
     <TextView
         android:id="@+id/txtTime"
@@ -65,7 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/lblLatitude"
         android:layout_alignLeft="@+id/txtAccuracy"
-        android:text="time placeholder" />
+        android:text="time placeholder"/>
 
     <TextView
         android:id="@+id/lblLatitude"
@@ -73,7 +73,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/lblTime"
         android:layout_below="@+id/lblTime"
-        android:text="@string/Latitude" />
+        android:text="@string/Latitude"/>
 
     <TextView
         android:id="@+id/lblLongitude"
@@ -81,7 +81,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/lblLatitude"
         android:layout_below="@+id/lblLatitude"
-        android:text="@string/Longitude" />
+        android:text="@string/Longitude"/>
 
     <TextView
         android:id="@+id/txtLongitude"
@@ -89,7 +89,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/lblSpeed"
         android:layout_alignLeft="@+id/txtLatitude"
-        android:text="long placeholder" />
+        android:text="long placeholder"/>
 
     <TextView
         android:id="@+id/lblSpeed"
@@ -97,7 +97,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/lblAltitude"
         android:layout_below="@+id/lblLongitude"
-        android:text="@string/Speed" />
+        android:text="@string/Speed"/>
 
     <TextView
         android:id="@+id/lblAltitude"
@@ -105,7 +105,7 @@
         android:layout_height="wrap_content"
         android:layout_alignRight="@+id/lblLatitude"
         android:layout_below="@+id/lblSpeed"
-        android:text="@string/Altitude" />
+        android:text="@string/Altitude"/>
 
     <Button
         android:id="@+id/btnStopBackground"
@@ -114,7 +114,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp"
-        android:text="@string/stop_background" />
+        android:text="@string/stop_background"/>
 
     <Button
         android:id="@+id/btnStartBackground"
@@ -122,7 +122,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/btnStopBackground"
         android:layout_toRightOf="@+id/lblAltitude"
-        android:text="@string/start_background" />
+        android:text="@string/start_background"/>
 
     <EditText
         android:id="@+id/txtRefreshInterval"
@@ -132,9 +132,9 @@
         android:layout_alignParentRight="true"
         android:layout_toRightOf="@+id/lblRefreshInterval"
         android:ems="10"
-        android:inputType="number" >
+        android:inputType="number">
 
-        <requestFocus />
+        <requestFocus/>
     </EditText>
 
     <TextView
@@ -144,7 +144,7 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/txtAltitude"
         android:layout_marginTop="48dp"
-        android:text="@string/refresh_interval" />
+        android:text="@string/refresh_interval"/>
 
     <RadioGroup
         android:id="@+id/radioFusedProviderType"
@@ -152,20 +152,33 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/txtRefreshInterval"
         android:layout_marginTop="24dp"
-        android:layout_toRightOf="@+id/lblLongitude" >
+        android:layout_toRightOf="@+id/lblLongitude">
 
         <RadioButton
             android:id="@+id/radioHighAccuracy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="@string/high_accuracy" />
+            android:text="@string/high_accuracy"/>
 
         <RadioButton
             android:id="@+id/radioBalancedPower"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/balanced_power" />
+            android:text="@string/balanced_power"/>
+
+        <RadioButton
+            android:id="@+id/radioLowPower"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/low_power"/>
+
+        <RadioButton
+            android:id="@+id/radioNoPower"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/no_power"/>
     </RadioGroup>
 
     <TextView
@@ -174,7 +187,7 @@
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/lblAltitude"
         android:layout_below="@+id/lblAltitude"
-        android:text="@string/type" />
+        android:text="@string/type"/>
 
     <TextView
         android:id="@+id/txtType"
@@ -183,7 +196,7 @@
         android:layout_alignBaseline="@+id/lblType"
         android:layout_alignBottom="@+id/lblType"
         android:layout_toRightOf="@+id/lblAccuracy"
-        android:text="type placeholder" />
+        android:text="type placeholder"/>
 
     <EditText
         android:id="@+id/txtNote"
@@ -193,7 +206,7 @@
         android:layout_alignParentRight="true"
         android:layout_below="@+id/radioFusedProviderType"
         android:layout_marginTop="14dp"
-        android:ems="10" />
+        android:ems="10"/>
 
     <RadioGroup
         android:id="@+id/radioGroupBackgroundType"
@@ -202,19 +215,26 @@
         android:layout_below="@+id/txtNote"
         android:layout_centerHorizontal="true">
 
-        <RadioButton
-            android:id="@+id/radioGeofence"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/geofence"/>
-
-        <RadioButton
-            android:id="@+id/radioLocation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/location"
-            android:checked="false"/>
     </RadioGroup>
+
+    <RadioButton
+        android:id="@+id/radioLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:text="@string/location"
+        android:layout_toEndOf="@+id/txtLatitude"
+        android:layout_alignTop="@+id/radioGroupBackgroundType"
+        android:layout_toRightOf="@+id/txtLatitude"/>
+
+    <RadioButton
+        android:id="@+id/radioGeofence"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="@string/geofence"
+        android:layout_alignTop="@+id/radioGroupBackgroundType"
+        android:layout_alignLeft="@+id/lblType"
+        android:layout_alignStart="@+id/lblType"/>
 
 </RelativeLayout>
