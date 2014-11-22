@@ -282,20 +282,6 @@ public class MainActivity extends Activity implements
     }
   }
 
-  private void updateView(Location location) {
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-    Date date = new Date(location.getTime());
-    txtTime.setText(sdf.format(date));
-
-    txtAccuracy.setText(Float.toString(location.getAccuracy()));
-
-    txtLatitude.setText(Double.toString(location.getLatitude()));
-    txtLongitude.setText(Double.toString(location.getLongitude()));
-
-    txtSpeed.setText(Float.toString(location.getSpeed()));
-    txtAltitude.setText(Double.toString(location.getAltitude()));
-  }
-
   private void disconnectLocationClient() {
     // when disconnected nothing will not be pulling location, unless
     // another app is pulling, so when you reconnect it could get an old location
@@ -333,19 +319,31 @@ public class MainActivity extends Activity implements
     return mLocationClient != null && (mLocationClient.isConnected() || mLocationClient.isConnecting());
   }
 
+  private void updateView(Location location) {
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+    Date date = new Date(location.getTime());
+    txtTime.setText(sdf.format(date));
+
+    txtAccuracy.setText(Float.toString(location.getAccuracy()));
+
+    txtLatitude.setText(Double.toString(location.getLatitude()));
+    txtLongitude.setText(Double.toString(location.getLongitude()));
+
+    txtSpeed.setText(Float.toString(location.getSpeed()));
+    txtAltitude.setText(Double.toString(location.getAltitude()));
+  }
+
   // Define a DialogFragment that displays the error dialog
   public static class ErrorDialogFragment extends DialogFragment {
 
     // Global field to contain the error dialog
     private Dialog mDialog;
 
-    // Default constructor. Sets the dialog field to null
     public ErrorDialogFragment() {
       super();
       mDialog = null;
     }
 
-    // Set the dialog to display
     public void setDialog(Dialog dialog) {
       mDialog = dialog;
     }
