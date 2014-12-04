@@ -3,6 +3,7 @@ package com.kamil.android_location;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
@@ -36,8 +37,6 @@ public class MainActivity extends Activity implements
 
   public static final String LOG_TAG = "Main Activity";
   private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-  // Update frequency in milliseconds
-  private static final long UPDATE_INTERVAL = Constants.MILLIS_PER_SECOND * Constants.DEFAULT_REFRESH_INTERVAL_SECS;
   TextView txtTime;
   TextView txtAccuracy;
   TextView txtLatitude;
@@ -50,7 +49,6 @@ public class MainActivity extends Activity implements
   RadioGroup radioGroupFusedProviderType;
   RadioGroup radioGroupBackgroundType;
   private GooglePlayHelper mGooglePlayHelper;
-  private boolean mServicesConnected;
   private LocationClient mLocationClient;
   private LocationRequest mLocationRequest;
 
@@ -62,8 +60,6 @@ public class MainActivity extends Activity implements
     setupControls();
 
     mGooglePlayHelper = new GooglePlayHelper();
-
-    //        connectLocationClient(LocationRequest.PRIORITY_HIGH_ACCURACY, UPDATE_INTERVAL, false);
   }
 
   /*
@@ -72,9 +68,6 @@ public class MainActivity extends Activity implements
   @Override
   protected void onStart() {
     super.onStart();
-    if (mServicesConnected) {
-      mLocationClient.connect();
-    }
   }
 
   @Override
@@ -83,12 +76,17 @@ public class MainActivity extends Activity implements
     if (!helper.servicesConnected(this)) {
       GooglePlayServicesUtil.getErrorDialog(helper.servicesResult(this), this, 0).show();
     }
+
+    connectLocationClient();
+
     super.onResume();
 
   }
 
   @Override
   protected void onPause() {
+    disconnectLocationClient();
+
     super.onPause();
   }
 
@@ -130,53 +128,16 @@ public class MainActivity extends Activity implements
     btnStartBackground.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
+        setFusedProviderTextBox();
+
         // stop the service first if running. Then start a new one
         stopService(new Intent(v.getContext(), LocationBackgroundService.class));
 
         int refreshInterval = Integer.valueOf(txtRefreshInterval.getText().toString());
+        int fusedProviderType = getFusedProviderType();
+        startBackgroundService(v.getContext(), refreshInterval, fusedProviderType);
 
-        int checkedButton = radioGroupFusedProviderType.getCheckedRadioButtonId();
-
-        int fusedProviderType;
-        switch (checkedButton) {
-          case R.id.radioBalancedPower:
-            fusedProviderType = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
-            txtType.setText(Constants.BALANCED_POWER);
-            break;
-
-          case R.id.radioLowPower:
-            fusedProviderType = LocationRequest.PRIORITY_LOW_POWER;
-            txtType.setText(Constants.LOW_POWER);
-            break;
-
-          case R.id.radioNoPower:
-            fusedProviderType = LocationRequest.PRIORITY_NO_POWER;
-            txtType.setText(Constants.NO_POWER);
-            break;
-
-          default: // high power
-            fusedProviderType = LocationRequest.PRIORITY_HIGH_ACCURACY;
-            txtType.setText(Constants.HIGH_ACCURACY);
-            break;
-        }
-
-        String note = txtNote.getText().toString();
-
-        int checkedBackgroundButton = radioGroupBackgroundType.getCheckedRadioButtonId();
-        String background_type = "geofence";
-        if (checkedBackgroundButton == R.id.radioLocation) {
-          background_type = "location";
-        }
-
-        Intent startIntent = new Intent(v.getContext(), LocationBackgroundService.class);
-        startIntent.putExtra(Constants.FUSED_PROVIDER_TYPE_EXTRA, fusedProviderType);
-        startIntent.putExtra(Constants.REFRESH_INTERVAL_EXTRA, refreshInterval);
-        startIntent.putExtra(Constants.NOTE_EXTRA, note);
-        startIntent.putExtra(Constants.BACKGROUND_TYPE_EXTRA, background_type);
-
-        startService(startIntent);
-
-        restartUILocationUpdates(fusedProviderType, refreshInterval);
+        restartUILocationUpdates();
       }
     });
 
@@ -190,9 +151,63 @@ public class MainActivity extends Activity implements
     });
   }
 
-  private void restartUILocationUpdates(int fusedProviderType, int refreshIntervalSecs) {
+  private void startBackgroundService(Context context, int refreshInterval, int fusedProviderType) {
+    String note = txtNote.getText().toString();
+
+    int checkedBackgroundButton = radioGroupBackgroundType.getCheckedRadioButtonId();
+    String background_type = "geofence";
+    if (checkedBackgroundButton == R.id.radioLocation) {
+      background_type = "location";
+    }
+
+    Intent startIntent = new Intent(context, LocationBackgroundService.class);
+    startIntent.putExtra(Constants.FUSED_PROVIDER_TYPE_EXTRA, fusedProviderType);
+    startIntent.putExtra(Constants.REFRESH_INTERVAL_EXTRA, refreshInterval);
+    startIntent.putExtra(Constants.NOTE_EXTRA, note);
+    startIntent.putExtra(Constants.BACKGROUND_TYPE_EXTRA, background_type);
+
+    startService(startIntent);
+  }
+
+  private int getFusedProviderType() {
+    int checkedButton = radioGroupFusedProviderType.getCheckedRadioButtonId();
+
+    switch (checkedButton) {
+      case R.id.radioBalancedPower:
+        return LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY;
+      case R.id.radioLowPower:
+        return LocationRequest.PRIORITY_LOW_POWER;
+      case R.id.radioNoPower:
+        return LocationRequest.PRIORITY_NO_POWER;
+      default: // high power
+        return LocationRequest.PRIORITY_HIGH_ACCURACY;
+    }
+  }
+
+  private void setFusedProviderTextBox() {
+    int checkedButton = radioGroupFusedProviderType.getCheckedRadioButtonId();
+
+    switch (checkedButton) {
+      case R.id.radioBalancedPower:
+        txtType.setText(Constants.BALANCED_POWER);
+        break;
+      case R.id.radioLowPower:
+        txtType.setText(Constants.LOW_POWER);
+        break;
+
+      case R.id.radioNoPower:
+        txtType.setText(Constants.NO_POWER);
+        break;
+
+      default: // high power
+        txtType.setText(Constants.HIGH_ACCURACY);
+        break;
+    }
+  }
+
+  private void restartUILocationUpdates() {
     disconnectLocationClient();
-    connectLocationClient(fusedProviderType, (long) refreshIntervalSecs, true);
+    connectLocationClient();
   }
 
   /*
@@ -284,29 +299,38 @@ public class MainActivity extends Activity implements
   private void disconnectLocationClient() {
     // when disconnected nothing will not be pulling location, unless
     // another app is pulling, so when you reconnect it could get an old location
-    if (mServicesConnected) {
-      if (mLocationClient.isConnected()) {
-        mLocationClient.removeLocationUpdates(this);
-      }
-
+    if (locationClientConnected()) {
+      mLocationClient.removeLocationUpdates(this);
       mLocationClient.disconnect();
     }
+
+    mLocationClient = null;
   }
 
-  private void connectLocationClient(int fusedLocationPriority, long refreshInterval, boolean connectImmediately) {
-    mServicesConnected = mGooglePlayHelper.servicesConnected(this);
-    if (mServicesConnected) {
-      mLocationClient = new LocationClient(this, this, this);
+  private void connectLocationClient() {
+
+    if (locationClientConnected()) {
+      Log.d(LOG_TAG, "No Connecting location client because already connected");
+      return;
+    }
+
+    boolean servicesConnected = mGooglePlayHelper.servicesConnected(this);
+    if (servicesConnected) {
+      int refreshInterval = Integer.valueOf(txtRefreshInterval.getText().toString());
+      int fusedProviderType = getFusedProviderType();
 
       mLocationRequest = LocationRequest.create();
-      mLocationRequest.setPriority(fusedLocationPriority);
+      mLocationRequest.setPriority(fusedProviderType);
       mLocationRequest.setInterval(refreshInterval * Constants.MILLIS_PER_SECOND);
       mLocationRequest.setFastestInterval(refreshInterval * Constants.MILLIS_PER_SECOND);
 
-      if (connectImmediately) {
-        mLocationClient.connect();
-      }
+      mLocationClient = new LocationClient(this, this, this);
+      mLocationClient.connect();
     }
+  }
+
+  private boolean locationClientConnected() {
+    return mLocationClient != null && (mLocationClient.isConnected() || mLocationClient.isConnecting());
   }
 
   // Define a DialogFragment that displays the error dialog
