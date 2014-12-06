@@ -5,7 +5,7 @@ android {
     buildToolsVersion "20.0.0"
 
     defaultConfig {
-        applicationId "com.kamil.android_location"
+        applicationId "com.sense360.android.location.tester"
         minSdkVersion 11
         targetSdkVersion 19
     }
