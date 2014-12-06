@@ -1,17 +1,17 @@
 <configuration debug="true">
-  <property name="EXT_FILES_DIR" value="${EXT_DIR:-/sdcard}/Android/data/${PACKAGE_NAME}/files"/>
-    
-  <appender name="LOCATION_FILE" class="ch.qos.logback.core.FileAppender">
-    <!-- lazy initialization: don't create the file until 1st write -->
-    <lazy>true</lazy>
+    <property name="EXT_FILES_DIR" value="${EXT_DIR:-/sdcard}/Android/data/${PACKAGE_NAME}/files"/>
 
-    <file>${EXT_FILES_DIR}/location.txt</file>
-    <encoder>
-      <pattern>%msg%n</pattern>
-    </encoder>
-  </appender>
+    <appender name="LOCATION_FILE" class="ch.qos.logback.core.FileAppender">
+        <!-- lazy initialization: don't create the file until 1st write -->
+        <lazy>true</lazy>
 
-  <root level="INFO">
-    <appender-ref ref="LOCATION_FILE" />
-  </root>
+        <file>${EXT_FILES_DIR}/location.txt</file>
+        <encoder>
+            <pattern>[%d{HH:mm:ss}] %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="LOCATION_FILE"/>
+    </root>
 </configuration>

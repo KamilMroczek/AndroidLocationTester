@@ -23,8 +23,14 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
+import com.kamil.android_location.android.DeviceServices;
 import com.kamil.android_location.android.GooglePlayHelper;
 import com.kamil.android_location.background.LocationBackgroundService;
+import com.kamil.android_location.background.place.FarPlaceDetector;
+import com.kamil.android_location.location.UserLocationBuilder;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,7 +42,11 @@ public class MainActivity extends Activity implements
                                            LocationListener {
 
   public static final String LOG_TAG = "Main Activity";
+  public static final float BIG_RADIUS_INTERVAL_B = 25f;
   private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+  private static final float BIG_RADIUS_R = 300f;
+  private static final float GAS_STATION_RADIUS_G = 30f;
+  private static final int INSIDE_POLLING_INTERVAL = 5;
   TextView txtTime;
   TextView txtAccuracy;
   TextView txtLatitude;
@@ -48,9 +58,11 @@ public class MainActivity extends Activity implements
   EditText txtNote;
   RadioGroup radioGroupFusedProviderType;
   RadioGroup radioGroupBackgroundType;
+  private Logger LOCATION_LOG = LoggerFactory.getLogger(MainActivity.class);
   private GooglePlayHelper mGooglePlayHelper;
   private LocationClient mLocationClient;
   private LocationRequest mLocationRequest;
+  private FarPlaceDetector mFarPlaceDetector;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +89,7 @@ public class MainActivity extends Activity implements
       GooglePlayServicesUtil.getErrorDialog(helper.servicesResult(this), this, 0).show();
     }
 
-    connectLocationClient();
+    //    connectLocationClient();
 
     super.onResume();
 
@@ -96,6 +108,7 @@ public class MainActivity extends Activity implements
   @Override
   protected void onStop() {
     disconnectLocationClient();
+
     super.onStop();
   }
 
@@ -128,16 +141,18 @@ public class MainActivity extends Activity implements
     btnStartBackground.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        setFusedProviderTextBox();
-
-        // stop the service first if running. Then start a new one
-        stopService(new Intent(v.getContext(), LocationBackgroundService.class));
-
-        int refreshInterval = Integer.valueOf(txtRefreshInterval.getText().toString());
-        int fusedProviderType = getFusedProviderType();
-        startBackgroundService(v.getContext(), refreshInterval, fusedProviderType);
-
-        restartUILocationUpdates();
+        //        setFusedProviderTextBox();
+        //
+        //        // stop the service first if running. Then start a new one
+        //        stopService(new Intent(v.getContext(), LocationBackgroundService.class));
+        //
+        //        int refreshInterval = Integer.valueOf(txtRefreshInterval.getText().toString());
+        //        int fusedProviderType = getFusedProviderType();
+        //        startBackgroundService(v.getContext(), refreshInterval, fusedProviderType);
+        //
+        //        restartUILocationUpdates();
+        startPlaceDetection();
+        Toast.makeText(getApplicationContext(), "Started", Toast.LENGTH_LONG).show();
       }
     });
 
@@ -145,10 +160,51 @@ public class MainActivity extends Activity implements
     btnStopBackground.setOnClickListener(new OnClickListener() {
       @Override
       public void onClick(View v) {
-        disconnectLocationClient();
-        stopService(new Intent(v.getContext(), LocationBackgroundService.class));
+        //        disconnectLocationClient();
+        //        stopService(new Intent(v.getContext(), LocationBackgroundService.class));
+        stopPlaceDetection();
+        Toast.makeText(getApplicationContext(), "Stopped", Toast.LENGTH_LONG).show();
       }
     });
+  }
+
+  private void startPlaceDetection() {
+    if (mFarPlaceDetector == null || !mFarPlaceDetector.isConnected()) {
+      DeviceServices ds = new DeviceServices(getApplicationContext());
+
+      String note = makeNote();
+
+      int refreshInterval = Integer.valueOf(txtRefreshInterval.getText().toString());
+      UserLocationBuilder bigBuilder = new UserLocationBuilder(ds, 0, "BalancedPower", note);
+      UserLocationBuilder smallBuilder = new UserLocationBuilder(ds, refreshInterval, "HighAccuracy", note);
+
+      mFarPlaceDetector = new FarPlaceDetector(getApplicationContext(), BIG_RADIUS_R, GAS_STATION_RADIUS_G,
+                                               INSIDE_POLLING_INTERVAL * Constants.SECOND, bigBuilder, smallBuilder);
+      LOCATION_LOG.info("--- " + note + "---");
+      mFarPlaceDetector.start();
+    } else {
+      Log.i(LOG_TAG, "Not starting since already connected");
+    }
+  }
+
+  private String makeNote() {
+    String note = "";
+    if (txtNote.getText().toString().length() > 0) {
+      note += txtNote.getText().toString() + "-";
+    }
+
+    note += ((int) BIG_RADIUS_R) + "R-" + ((int) BIG_RADIUS_INTERVAL_B) + "B-" + ((int) GAS_STATION_RADIUS_G) + "G-" +
+        ((int) INSIDE_POLLING_INTERVAL) + "I";
+
+    return note;
+  }
+
+  private void stopPlaceDetection() {
+    if (mFarPlaceDetector != null && mFarPlaceDetector.isConnected()) {
+      mFarPlaceDetector.stop();
+    } else {
+      Log.i(LOG_TAG, "Cannot stop far place detector as it is not connected");
+    }
   }
 
   private void startBackgroundService(Context context, int refreshInterval, int fusedProviderType) {
@@ -282,24 +338,11 @@ public class MainActivity extends Activity implements
     }
   }
 
-  private void updateView(Location location) {
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
-    Date date = new Date(location.getTime());
-    txtTime.setText(sdf.format(date));
-
-    txtAccuracy.setText(Float.toString(location.getAccuracy()));
-
-    txtLatitude.setText(Double.toString(location.getLatitude()));
-    txtLongitude.setText(Double.toString(location.getLongitude()));
-
-    txtSpeed.setText(Float.toString(location.getSpeed()));
-    txtAltitude.setText(Double.toString(location.getAltitude()));
-  }
-
   private void disconnectLocationClient() {
     // when disconnected nothing will not be pulling location, unless
     // another app is pulling, so when you reconnect it could get an old location
     if (locationClientConnected()) {
+      Toast.makeText(getApplicationContext(), "Disconnectign client", Toast.LENGTH_SHORT).show();
       mLocationClient.removeLocationUpdates(this);
       mLocationClient.disconnect();
     }
@@ -321,8 +364,9 @@ public class MainActivity extends Activity implements
 
       mLocationRequest = LocationRequest.create();
       mLocationRequest.setPriority(fusedProviderType);
-      mLocationRequest.setInterval(refreshInterval * Constants.MILLIS_PER_SECOND);
-      mLocationRequest.setFastestInterval(refreshInterval * Constants.MILLIS_PER_SECOND);
+      mLocationRequest.setInterval(refreshInterval * Constants.SECOND);
+      mLocationRequest.setFastestInterval(refreshInterval * Constants.SECOND);
+      mLocationRequest.setSmallestDisplacement(0);
 
       mLocationClient = new LocationClient(this, this, this);
       mLocationClient.connect();
@@ -333,19 +377,31 @@ public class MainActivity extends Activity implements
     return mLocationClient != null && (mLocationClient.isConnected() || mLocationClient.isConnecting());
   }
 
+  private void updateView(Location location) {
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+    Date date = new Date(location.getTime());
+    txtTime.setText(sdf.format(date));
+
+    txtAccuracy.setText(Float.toString(location.getAccuracy()));
+
+    txtLatitude.setText(Double.toString(location.getLatitude()));
+    txtLongitude.setText(Double.toString(location.getLongitude()));
+
+    txtSpeed.setText(Float.toString(location.getSpeed()));
+    txtAltitude.setText(Double.toString(location.getAltitude()));
+  }
+
   // Define a DialogFragment that displays the error dialog
   public static class ErrorDialogFragment extends DialogFragment {
 
     // Global field to contain the error dialog
     private Dialog mDialog;
 
-    // Default constructor. Sets the dialog field to null
     public ErrorDialogFragment() {
       super();
       mDialog = null;
     }
 
-    // Set the dialog to display
     public void setDialog(Dialog dialog) {
       mDialog = dialog;
     }
